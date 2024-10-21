@@ -10,7 +10,8 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum BusinessExceptionEnum {
-    BUSINESS_IS_NULL("查询商家为空");
+    BUSINESS_IS_NULL("查询商家为空"),
+    BUSINESS_NOT_EXIST("商家不存在");
 //    MEMBER_MOBILE_EXIST("手机号已注册"),
 //    MEMBER_MOBILE_NOT_EXIST("请先获取短信验证码"),
 //    MEMBER_MOBILE_CODE_ERROR("短信验证码错误");

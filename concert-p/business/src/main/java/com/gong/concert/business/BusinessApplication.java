@@ -19,7 +19,7 @@ import org.springframework.core.env.Environment;
 @Slf4j
 @MapperScan(basePackages = "com.gong.concert.*.mapper")
 @EnableAspectJAutoProxy
-@ComponentScan(basePackages = "com.gong.concert")
+@ComponentScan(basePackages = "com.gong")
 public class BusinessApplication {
     private static final Logger LOG = LoggerFactory.getLogger(BusinessApplication.class);
     public static void main(String[] args) {

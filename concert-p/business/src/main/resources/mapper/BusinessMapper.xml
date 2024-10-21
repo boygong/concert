@@ -17,4 +17,28 @@
         </where>
         order by identity asc
     </select>
+
+    <select id="selectByExample" resultType="com.gong.concert.business.entity.Business">
+        SELECT *
+        FROM
+        `business`
+        <where>
+            <!-- 动态条件开始 -->
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="username != null and username != ''">
+                AND username = #{username}
+            </if>
+            <if test="email != null and email != ''">
+                AND email LIKE CONCAT('%', #{email}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND phone LIKE CONCAT('%', #{phone}, '%')
+            </if>
+        </where>
+    </select>
 </mapper>

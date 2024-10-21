@@ -1,7 +1,10 @@
 package com.gong.concert.business.controller;
 
 import com.gong.concert.business.dto.BusinessListDTO;
+import com.gong.concert.business.dto.BusinessLoginDTO;
+import com.gong.concert.business.entity.Business;
 import com.gong.concert.business.service.BusinessService;
+import com.gong.concert.business.vo.BusinessLoginVO;
 import com.gong.concert.business.vo.BusinessVO;
 import com.gong.concert.common.exception.BusinessException;
 import com.gong.concert.common.exception.BusinessExceptionEnum;
@@ -38,5 +41,11 @@ public class BusinessController {
         }else {
             return Result.success(list);
         }
+    }
+
+    @PostMapping("/login")
+    public Result login(@RequestBody BusinessLoginDTO loginDTO){
+        BusinessLoginVO businessLoginVO = businessService.login(loginDTO);
+        return Result.success(businessLoginVO);
     }
 }

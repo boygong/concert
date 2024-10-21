@@ -1,6 +1,7 @@
 package com.gong.concert.business.mapper;
 
 import com.gong.concert.business.dto.BusinessListDTO;
+import com.gong.concert.business.entity.Business;
 import com.gong.concert.business.vo.BusinessVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -15,4 +16,6 @@ import java.util.List;
 public interface BusinessMapper {
 
     List<BusinessVO> selectBusinessList(BusinessListDTO dto);
+
+    Business selectByExample(Business business);
 }
