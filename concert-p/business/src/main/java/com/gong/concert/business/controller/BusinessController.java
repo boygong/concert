@@ -33,7 +33,8 @@ public class BusinessController {
             log.info("枚举值:{}",BusinessExceptionEnum.BUSINESS_IS_NULL.getDesc());
             BusinessException businessException = new BusinessException(BusinessExceptionEnum.BUSINESS_IS_NULL);
             System.out.println(businessException);
-            throw new BusinessException(BusinessExceptionEnum.BUSINESS_IS_NULL);
+//            throw new BusinessException(BusinessExceptionEnum.BUSINESS_IS_NULL);
+            return null;
         }else {
             return Result.success(list);
         }

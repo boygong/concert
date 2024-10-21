@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
+
 /**
  * @Author ToastFish
  * @Time 2024/10/11
@@ -48,4 +51,14 @@ public class GlobalExceptionHandler {
         result.setMsg(e.getE().getDesc());
         return result;
     }
+
+//    @ExceptionHandler(value = SQLException.class)
+//    @ResponseBody
+//    public Result exceptionHandler(SQLException e) {
+//        Result result = new Result();
+//        log.error("数据库异常：{}", e.fillInStackTrace());
+//        result.setCode(999);
+//        result.setMsg("数据库异常，请联系管理员");
+//        return result;
+//    }
 }
