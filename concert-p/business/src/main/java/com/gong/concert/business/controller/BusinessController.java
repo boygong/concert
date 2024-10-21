@@ -10,6 +10,7 @@ import com.gong.concert.common.exception.BusinessException;
 import com.gong.concert.common.exception.BusinessExceptionEnum;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,5 +61,11 @@ public class BusinessController {
     public Result login(@Valid @RequestBody BusinessLoginDTO loginDTO){
         BusinessLoginVO businessLoginVO = businessService.login(loginDTO);
         return Result.success(businessLoginVO);
+    }
+
+    @PostMapping("/save")
+    public Result save(@Valid @RequestBody Business business){
+        businessService.save(business);
+        return Result.success();
     }
 }

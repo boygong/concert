@@ -8,13 +8,16 @@ import com.gong.concert.business.mapper.BusinessMapper;
 import com.gong.concert.business.service.BusinessService;
 import com.gong.concert.business.vo.BusinessLoginVO;
 import com.gong.concert.business.vo.BusinessVO;
+import com.gong.concert.common.context.LoginBusinessContext;
 import com.gong.concert.common.exception.BusinessException;
 import com.gong.concert.common.exception.BusinessExceptionEnum;
 import com.gong.concert.common.util.JwtUtil;
+import com.gong.concert.common.util.SnowUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,5 +72,35 @@ public class BusinessServiceImpl implements BusinessService {
         String token = JwtUtil.createToken(businessLoginVO.getBusinessId(), businessLoginVO.getPhone());
         businessLoginVO.setToken(token);
         return businessLoginVO;
+    }
+
+    @Override
+    public void save(Business business) {
+        log.info("进入Service层，开始检测数据合法性");
+        String username = business.getUsername();
+        Business toDB = new Business();
+        toDB.setUsername(username);
+        Business businessDB = businessMapper.selectByExample(toDB); //通过用户名获取商家
+        if (businessDB != null){
+            //商家存在抛出异常
+            throw new BusinessException(BusinessExceptionEnum.BUSINESS_IS_EXIST);
+        }
+        if (business.getPhone().length() != 11){
+            //手机号格式错误
+            throw new BusinessException(BusinessExceptionEnum.PHONE_IS_ERROR);
+        }
+        if (business.getIdNumber().length()!=18){
+            //身份证格式错误
+            throw new BusinessException(BusinessExceptionEnum.IDNUMBER_IS_ERROR);
+        }
+
+        business.setBusinessId(SnowUtil.getSnowflakeNextIdStr());
+        business.setStatus((short) 1);
+        business.setCreateTime(LocalDateTime.now());
+//        business.setCreateUser(LoginBusinessContext.getId());
+        business.setCreateUser("admin");
+
+
+        businessMapper.insertBusiness(business);
     }
 }

@@ -81,4 +81,10 @@
             </if>
         </where>
     </select>
+
+    <insert id="insertBusiness">
+        insert into business values (#{businessId},#{name},#{username},#{password}
+                                    ,#{phone},#{sex},#{identity},#{status},#{createTime},#{updateTime}
+                                    ,#{createUser},#{updateUser},#{idNumber})
+    </insert>
 </mapper>
