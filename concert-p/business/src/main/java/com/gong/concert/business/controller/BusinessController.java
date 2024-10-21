@@ -30,11 +30,17 @@ import java.util.List;
 public class BusinessController {
     @Autowired
     private BusinessService businessService;
+    /**
+     * @description: 查询商家列表
+     * @author: gongyuankang
+     * @date: 2024/10/21 17:18
+     * @return: Result
+    */
     @PostMapping("/getList")
     public Result getBusinessList(@RequestBody BusinessListDTO getBusinessList){
+        log.info("入参实体类getBusinessList:{}",getBusinessList);
         List<BusinessVO>  list = businessService.getList(getBusinessList);
         if (list == null || list.size() == 0){
-            log.info("枚举值:{}",BusinessExceptionEnum.BUSINESS_IS_NULL.getDesc());
             BusinessException businessException = new BusinessException(BusinessExceptionEnum.BUSINESS_IS_NULL);
             System.out.println(businessException);
 //            throw new BusinessException(BusinessExceptionEnum.BUSINESS_IS_NULL);
@@ -44,6 +50,12 @@ public class BusinessController {
         }
     }
 
+    /**
+     * @description:  商家登录接口
+     * @author: gongyuankang
+     * @date: 2024/10/21 17:17
+     * @return: Result<BusinessLoginVO>
+    */
     @PostMapping("/login")
     public Result login(@Valid @RequestBody BusinessLoginDTO loginDTO){
         BusinessLoginVO businessLoginVO = businessService.login(loginDTO);

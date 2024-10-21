@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,13 +28,19 @@ public class BusinessServiceImpl implements BusinessService {
     @Autowired
     private BusinessMapper businessMapper;
     @Override
-    public List<BusinessVO> getList(BusinessListDTO getBusinessList) {
+    public List<BusinessVO> getList(BusinessListDTO dto) {
+        List<BusinessVO> resp = new ArrayList<>();
         log.trace("调用映射接口:getBusinessList");
         try {
-            List<BusinessVO> businessVOS = businessMapper.selectBusinessList(getBusinessList);
-            log.trace("映射出参:{}",businessMapper.selectBusinessList(getBusinessList));
-            log.trace("出参：{}",businessVOS);
-            return businessVOS;
+            List<Business> businessList = businessMapper.selectListByExample(dto);
+            log.trace("映射出参:{}",businessMapper.selectListByExample(dto));
+            log.trace("出参：{}",businessList);
+            businessList.stream().forEach(business -> {
+                BusinessVO businessVO = new BusinessVO();
+                BeanUtil.copyProperties(business,businessVO); //拷贝商家类
+                resp.add(businessVO);
+            });
+            return resp;
         }catch (Exception e){
             log.error("调用失败,返回",e);
         }

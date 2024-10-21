@@ -22,9 +22,9 @@ public class BusinessVO {
     private String username;
     private String password;
     private String phone;
-    private short sex; //性别(1.男  0.女)
-    private short identity; //身份(0.管理员   1.商家)
-    private short status;//状态(0.禁用 1.启用)
+    private Short sex; //性别(1.男  0.女)
+    private Short identity; //身份(0.管理员   1.商家)
+    private Short status;//状态(0.禁用 1.启用)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime createTime;
 

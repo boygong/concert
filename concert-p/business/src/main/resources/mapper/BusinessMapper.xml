@@ -39,6 +39,46 @@
             <if test="phone != null and phone != ''">
                 AND phone LIKE CONCAT('%', #{phone}, '%')
             </if>
+            <if test="idNumber != null">
+                AND id_number = #{id_number}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectListByExample" resultType="com.gong.concert.business.entity.Business">
+        SELECT *
+        FROM
+        `business`
+        <where>
+            <!-- 动态条件开始 -->
+            <if test="businessId != null and businessId != ''">
+                AND business_id = #{businessId}
+            </if>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="username != null and username != ''">
+                AND username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                AND password = #{password}
+            </if>
+            <if test="phone != null and phone != ''">
+                AND phone LIKE CONCAT('%', #{phone}, '%')
+            </if>
+            <if test="sex !=null">
+                AND sex = #{sex}
+            </if>
+            <if test="status !=null">
+                AND status = #{status}
+            </if>
+            <if test="identity !=null">
+                AND identity = #{identity}
+            </if>
+
+            <if test="idNumber != null">
+                AND id_number = #{idNumber}
+            </if>
         </where>
     </select>
 </mapper>
