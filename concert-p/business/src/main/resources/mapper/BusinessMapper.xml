@@ -24,8 +24,8 @@
         `business`
         <where>
             <!-- 动态条件开始 -->
-            <if test="id != null and id != ''">
-                AND id = #{id}
+            <if test="businessId != null and businessId != ''">
+                AND business_id = #{businessId}
             </if>
             <if test="name != null and name != ''">
                 AND name LIKE CONCAT('%', #{name}, '%')
@@ -33,8 +33,8 @@
             <if test="username != null and username != ''">
                 AND username = #{username}
             </if>
-            <if test="email != null and email != ''">
-                AND email LIKE CONCAT('%', #{email}, '%')
+            <if test="password != null and password != ''">
+                AND password = #{password}
             </if>
             <if test="phone != null and phone != ''">
                 AND phone LIKE CONCAT('%', #{phone}, '%')

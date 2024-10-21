@@ -42,14 +42,21 @@ public class BusinessServiceImpl implements BusinessService {
 
     @Override
     public BusinessLoginVO login(BusinessLoginDTO loginDTO) {
-        String userName = loginDTO.getUserName();
+        String userName = loginDTO.getUsername();
         String password = loginDTO.getPassword();
+        log.info("参数校验:{},{}",userName,password);
         Business business = new Business();
         business.setUsername(userName);
         business.setPassword(password);
         Business businessDB = businessMapper.selectByExample(business);
+        log.info("调用BusinessMapper映射selectByExample出参:{}",businessDB);
         if (businessDB == null){
+            log.error("查找到的商户数为空");
             throw new BusinessException(BusinessExceptionEnum.BUSINESS_NOT_EXIST);
+        }
+        if (!businessDB.getPassword().equals(password) || !businessDB.getUsername().equals(userName)){
+            log.error("输入账户密码和实际账户密码:{},{},{},{}",userName,password,businessDB.getUsername(),businessDB.getPassword());
+            throw new BusinessException(BusinessExceptionEnum.PASSWORD_IS_WARN);
         }
         BusinessLoginVO businessLoginVO = BeanUtil.copyProperties(businessDB, BusinessLoginVO.class);
         String token = JwtUtil.createToken(businessLoginVO.getBusinessId(), businessLoginVO.getPhone());

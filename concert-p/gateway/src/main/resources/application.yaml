@@ -10,3 +10,18 @@ spring:
           uri: http://127.0.0.1:28002
           predicates: # 路由断言，也就是判断请求是否符合路由规则的条件
             - Path=/business/** # 这个是按照路径匹配，只要以/user/开头就符合要求
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+            allowed-headers:
+              - "*"
+            exposed-headers:
+              - "Authorization"
+            allowCredentials: true
+            max-age: 3600

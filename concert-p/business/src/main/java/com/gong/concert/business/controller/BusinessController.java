@@ -8,6 +8,7 @@ import com.gong.concert.business.vo.BusinessLoginVO;
 import com.gong.concert.business.vo.BusinessVO;
 import com.gong.concert.common.exception.BusinessException;
 import com.gong.concert.common.exception.BusinessExceptionEnum;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,7 +45,7 @@ public class BusinessController {
     }
 
     @PostMapping("/login")
-    public Result login(@RequestBody BusinessLoginDTO loginDTO){
+    public Result login(@Valid @RequestBody BusinessLoginDTO loginDTO){
         BusinessLoginVO businessLoginVO = businessService.login(loginDTO);
         return Result.success(businessLoginVO);
     }

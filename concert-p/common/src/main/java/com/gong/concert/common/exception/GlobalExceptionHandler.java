@@ -2,6 +2,7 @@ package com.gong.concert.common.exception;
 
 import com.gong.concert.common.resp.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -49,6 +50,20 @@ public class GlobalExceptionHandler {
         log.error("业务异常：{}", e.getE().getDesc());
         result.setCode(999);
         result.setMsg(e.getE().getDesc());
+        return result;
+    }
+    /**
+     * 校验异常统一处理
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = BindException.class)
+    @ResponseBody
+    public Result exceptionHandler(BindException e) {
+        Result result = new Result();
+        log.error("校验异常：{}", e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        result.setCode(0);
+        result.setMsg(e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
         return result;
     }
 

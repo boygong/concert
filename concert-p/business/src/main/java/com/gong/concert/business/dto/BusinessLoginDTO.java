@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class BusinessLoginDTO {
     @NotBlank(message = "[用户名]不能为空")
-    private String userName;
+    private String username;
     @NotBlank(message = "[密码]不能为空")
     private String password;
 }
