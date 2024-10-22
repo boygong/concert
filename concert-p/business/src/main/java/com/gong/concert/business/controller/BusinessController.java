@@ -12,10 +12,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.gong.concert.common.resp.Result;
 
 import java.util.List;
@@ -63,9 +60,39 @@ public class BusinessController {
         return Result.success(businessLoginVO);
     }
 
+    /**
+     * @description: 添加商家
+     * @author: gongyuankang
+     * @date: 2024/10/22 9:49
+     * @return:
+    */
     @PostMapping("/save")
     public Result save(@Valid @RequestBody Business business){
         businessService.save(business);
+        return Result.success();
+    }
+
+    /**
+     * @description: 商家回显接口
+     * @author: gongyuankang
+     * @date: 2024/10/22 9:50
+     * @return:
+    */
+    @GetMapping("/getOne")
+    public Result getOne(@RequestParam String username){
+        BusinessVO businessVO = businessService.getOne(username);
+        return Result.success(businessVO);
+    }
+
+    /**
+     * @description: 商家信息修改
+     * @author: gongyuankang
+     * @date: 2024/10/22 9:58
+     * @return:
+    */
+    @PutMapping("/update")
+    public Result update(@RequestBody Business business){
+        businessService.update(business);
         return Result.success();
     }
 }

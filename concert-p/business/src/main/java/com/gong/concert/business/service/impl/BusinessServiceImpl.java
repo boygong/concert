@@ -32,6 +32,7 @@ public class BusinessServiceImpl implements BusinessService {
     private BusinessMapper businessMapper;
     @Override
     public List<BusinessVO> getList(BusinessListDTO dto) {
+        log.info("获取商家列表Service层");
         List<BusinessVO> resp = new ArrayList<>();
         log.trace("调用映射接口:getBusinessList");
         try {
@@ -52,6 +53,7 @@ public class BusinessServiceImpl implements BusinessService {
 
     @Override
     public BusinessLoginVO login(BusinessLoginDTO loginDTO) {
+        log.info("商家登录Service层");
         String userName = loginDTO.getUsername();
         String password = loginDTO.getPassword();
         log.info("参数校验:{},{}",userName,password);
@@ -76,7 +78,7 @@ public class BusinessServiceImpl implements BusinessService {
 
     @Override
     public void save(Business business) {
-        log.info("进入Service层，开始检测数据合法性");
+        log.info("添加商家Service层，开始检测数据合法性");
         String username = business.getUsername();
         Business toDB = new Business();
         toDB.setUsername(username);
@@ -102,5 +104,44 @@ public class BusinessServiceImpl implements BusinessService {
 
 
         businessMapper.insertBusiness(business);
+    }
+
+    @Override
+    public BusinessVO getOne(String username) {
+        log.info("商家回显Service层");
+        Business toDB = new Business();
+        toDB.setUsername(username);
+        Business businessDB = businessMapper.selectByExample(toDB); //通过用户名获取商家
+        BusinessVO businessVO = BeanUtil.copyProperties(businessDB, BusinessVO.class);
+        return businessVO;
+    }
+
+    @Override
+    public void update(Business business) {
+        log.info("商家修改Service层,开始数据校验");
+        String username = business.getUsername();
+        Business toDB = new Business();
+        toDB.setUsername(username);
+        Business businessDB = businessMapper.selectByExample(toDB); //通过用户名获取商家
+        if (businessDB == null){
+            //商家存在抛出异常
+            throw new BusinessException(BusinessExceptionEnum.BUSINESS_NOT_EXIST);
+        }
+        if (business.getPhone().length() != 11){
+            //手机号格式错误
+            throw new BusinessException(BusinessExceptionEnum.PHONE_IS_ERROR);
+        }
+        if (business.getIdNumber().length()!=18){
+            //身份证格式错误
+            throw new BusinessException(BusinessExceptionEnum.IDNUMBER_IS_ERROR);
+        }
+
+        business.setUpdateTime(LocalDateTime.now());
+        business.setUpdateUser("admin"); //先写死
+
+        int i = businessMapper.updateBusiness(business);
+        if (i != 1){
+            throw new BusinessException(BusinessExceptionEnum.BUSINESS_UPDATE_ERROR);
+        }
     }
 }

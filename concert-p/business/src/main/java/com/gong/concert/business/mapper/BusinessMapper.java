@@ -20,4 +20,6 @@ public interface BusinessMapper {
     List<Business> selectListByExample(BusinessListDTO businessDTO);
 
     void insertBusiness(Business business);
+
+    int updateBusiness(Business business);
 }

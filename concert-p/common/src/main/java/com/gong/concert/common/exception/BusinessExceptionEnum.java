@@ -15,7 +15,8 @@ public enum BusinessExceptionEnum {
     PASSWORD_IS_WARN("账户或密码错误"),
     BUSINESS_IS_EXIST("该账户已注册"),
     PHONE_IS_ERROR("手机号码错误"),
-    IDNUMBER_IS_ERROR("身份证错误");
+    IDNUMBER_IS_ERROR("身份证错误"),
+    BUSINESS_UPDATE_ERROR("商家信息更新错误");
 //    MEMBER_MOBILE_EXIST("手机号已注册"),
 //    MEMBER_MOBILE_NOT_EXIST("请先获取短信验证码"),
 //    MEMBER_MOBILE_CODE_ERROR("短信验证码错误");

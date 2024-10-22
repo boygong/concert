@@ -63,7 +63,7 @@
                 </a-select>
             </a-form-item>
             <a-form-item label="身份证">
-                <a-input v-model:value="business.id_number" />
+                <a-input v-model:value="business.idNumber" />
             </a-form-item>
         </a-form>
     </a-modal>
@@ -158,7 +158,7 @@ export default defineComponent({
             phone: undefined,
             sex: "1",
             identity: "1",
-            id_number: undefined,
+            idNumber: undefined,
         });
         let businessDTO = ref({
             businessId: undefined,
@@ -183,6 +183,8 @@ export default defineComponent({
                 if (data.code === 1) {
                     notification.success({ description: "保存成功！" });
                     visible.value = false;
+                    console.log("刷新数据");
+                    fetchData();
                     // handleQuery({
                     //     page: pagination.value.current,
                     //     size: pagination.value.pageSize

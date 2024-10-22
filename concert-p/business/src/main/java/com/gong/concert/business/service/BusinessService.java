@@ -19,4 +19,8 @@ public interface BusinessService {
     BusinessLoginVO login(BusinessLoginDTO loginDTO);
 
     void save(Business business);
+
+    BusinessVO getOne(String username);
+
+    void update(Business business);
 }
