@@ -48,7 +48,7 @@ export default defineComponent({
           console.log(data.data)
           store.commit("setBusiness",data.data);
         } else {
-          notification.error({ description: data.message });
+          notification.error({ description: data.msg });
         }
       })
     };
