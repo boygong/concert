@@ -21,9 +21,9 @@ public class LoginBusinessContext {
         LoginBusinessContext.business.set(business.get());
     }
 
-    public static String getId() {
+    public static String getUsername() {
         try {
-            return business.get().getBusinessId();
+            return business.get().getUsername();
         } catch (Exception e) {
             log.error("获取登录会员信息异常", e);
             throw e;

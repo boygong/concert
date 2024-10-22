@@ -21,8 +21,8 @@ public class JwtUtil {
      */
     private static final String key = "LaoGong12306";
 
-    public static String createToken(String id, String mobile) {
-        LOG.info("开始生成JWT token，id：{}，mobile：{}", id, mobile);
+    public static String createToken(String username, String mobile) {
+        LOG.info("开始生成JWT token，id：{}，mobile：{}", username, mobile);
         GlobalBouncyCastleProvider.setUseBouncyCastle(false);
         DateTime now = DateTime.now();
         DateTime expTime = now.offsetNew(DateField.HOUR, 24);
@@ -34,7 +34,7 @@ public class JwtUtil {
         // 生效时间
         payload.put(JWTPayload.NOT_BEFORE, now);
         // 内容
-        payload.put("id", id);
+        payload.put("username", username);
         payload.put("mobile", mobile);
         String token = JWTUtil.createToken(payload, key.getBytes());
         LOG.info("生成JWT token：{}", token);

@@ -8,36 +8,68 @@
 
     <div>
         <a-table :columns="columns" :dataSource="businessData">
-            <!-- 使用 v-slot:action 来定义操作列的插槽 -->
-            <template v-slot:customRender="{ record, index }">
-                <span>
-                    <a-button @click="handleEdit(record, index)" type="primary" size="small">编辑</a-button>
-                    <a-button @click="handleDelete(record, index)" type="primary" size="small" danger>删除</a-button>
+            <template v-slot:gender="{ text }">
+                {{ text === 1 ? '男' : '女' }}
+            </template>
+            <template v-slot:identity="{ text }">
+                {{ text === 1 ? '商家' : '管理员' }}
+            </template>
+            <template v-slot:status="{ text }">
+                <span :style="{ color: text === 1 ? 'green' : 'red', fontSize: '16px' }">
+                    {{ text === 1 ? '● 启用' : '○ 禁用' }}
                 </span>
+            </template>
+            <!-- 使用 v-slot:action 来定义操作列的插槽 -->
+            <template v-slot:customRender="{ record }">
+                <span>
+                    <a-button @click="showModal(record.username)" type="primary" size="small">编辑</a-button>
+                    <a-button :type="record.status === 1 ? 'dashed' : 'primary'"
+                        @click="handleDelete(record.username, record.status)" size="small">
+                        {{ record.status === 1 ? '停用' : '启用' }}
+                    </a-button> </span>
             </template>
         </a-table>
     </div>
-
-    <!-- <a-modal v-model:visible="visible" title="创建商家" @ok="handleOk" ok-text="确认" cancel-text="取消">
-        <a-form :model="passenger" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
+    <a-modal v-model:visible="visible2" title="商家信息" @ok="handleSave" @cancel="handleCancel">
+        <a-form :model="form" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
+            <a-form-item label="商家id">
+                <a-input v-model:value="form.businessId" />
+            </a-form-item>
             <a-form-item label="姓名">
-                <a-input v-model:value="passenger.name" />
+                <a-input v-model:value="form.name" />
             </a-form-item>
-            <a-form-item label="身份证">
-                <a-input v-model:value="passenger.idCard" />
+            <a-form-item label="用户名">
+                <a-input v-model:value="form.username" />
             </a-form-item>
-            <a-form-item label="旅客类型">
-                <a-select v-model:value="passenger.type">
-                    <a-select-option :value="1">成人</a-select-option>
-                    <a-select-option :value="2">儿童</a-select-option>
-                    <a-select-option :value="3">学生</a-select-option>
+            <a-form-item label="密码">
+                <a-input type="password" v-model:value="form.password" />
+            </a-form-item>
+            <a-form-item label="联系方式">
+                <a-input v-model:value="form.phone" />
+            </a-form-item>
+            <a-form-item label="性别">
+                <a-select v-model:value="form.sex">
+                    <a-select-option value="1">男</a-select-option>
+                    <a-select-option value="0">女</a-select-option>
                 </a-select>
             </a-form-item>
+            <a-form-item label="身份">
+                <a-select v-model:value="form.identity">
+                    <a-select-option value="0">管理员</a-select-option>
+                    <a-select-option value="1">商家</a-select-option>
+                </a-select>
+            </a-form-item>
+            <a-form-item label="身份证">
+                <a-input v-model:value="form.idNumber" />
+            </a-form-item>
+            <a-form-item label="创建时间">
+                <a-input v-model:value="form.createTime" />
+            </a-form-item>
         </a-form>
-    </a-modal> -->
+    </a-modal>
 
     <a-modal v-model:visible="visible" title="创建商家" @ok="handleOk" ok-text="确认" cancel-text="取消">
-        <a-form :model="passenger" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
+        <a-form :model="business" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
             <a-form-item label="姓名">
                 <a-input v-model:value="business.name" />
             </a-form-item>
@@ -84,6 +116,8 @@ export default defineComponent({
         const PASSENGER_TYPE_ARRAY = window.PASSENGER_TYPE_ARRAY;
         const businessData = ref([]);
         const visible = ref(false);
+        const visible2 = ref(false);
+
         const columns = [
             {
                 title: '商家ID',
@@ -117,19 +151,19 @@ export default defineComponent({
                 title: '性别',
                 dataIndex: 'sex',
                 key: 'sex',
-                render: (text) => (text === 1 ? '男' : '女'),
+                slots: { customRender: 'gender' },
             },
             {
                 title: '身份',
                 dataIndex: 'identity',
                 key: 'identity',
-                render: (text) => (text === 0 ? '管理员' : '商家'),
+                slots: { customRender: 'identity' },
             },
             {
                 title: '状态',
                 dataIndex: 'status',
                 key: 'status',
-                render: (text) => (text === 1 ? '启用' : '禁用'),
+                slots: { customRender: 'status' },
             },
             {
                 title: '创建时间',
@@ -143,6 +177,16 @@ export default defineComponent({
                 dataIndex: 'updateTime',
                 key: 'updateTime',
                 render: (text) => text.toLocaleString(), // 格式化日期显示  
+            },
+            {
+                title: '创建操作员',
+                dataIndex: 'createUser',
+                key: 'createUser',
+            },
+            {
+                title: '更新操作员',
+                dataIndex: 'updateUser',
+                key: 'updateUser',
             },
             {
                 title: '操作',
@@ -160,6 +204,17 @@ export default defineComponent({
             identity: "1",
             idNumber: undefined,
         });
+        let form = ref({
+            businessId: undefined,
+            name: undefined,
+            username: undefined,
+            password: undefined,
+            phone: undefined,
+            sex: undefined,
+            identity: undefined,
+            idNumber: undefined,
+            createTime: undefined
+        });
         let businessDTO = ref({
             businessId: undefined,
             name: undefined,
@@ -170,6 +225,8 @@ export default defineComponent({
             identity: undefined,
             status: undefined,
             idNumber: undefined,
+            createUser: undefined,
+            updateUser: undefined,
             type: 1,
         })
         // const passengers = ref([]);
@@ -194,10 +251,10 @@ export default defineComponent({
                 }
             });
         };
-        // 模拟从后端获取数据  
+        //获取商家列表信息
         const fetchData = async () => {
             try {
-                const response = await axios.post('/business/business/getList', businessDTO.value); // 替换为您的后端API  
+                const response = await axios.post('/business/business/getList', businessDTO.value);
                 businessData.value = response.data.data;
                 console.log("表格数据", businessData.value)
             } catch (error) {
@@ -205,16 +262,72 @@ export default defineComponent({
             }
         };
 
-        // 编辑操作（示例）  
-        const handleEdit = (record) => {
-            console.log('Edit:', record);
-            // 实现编辑逻辑，如跳转到编辑页面或弹出编辑对话框  
+        const showModal = (username) => {
+            console.log("回显传参:", username);
+            axios.get("/business/business/getOne", {
+                params: {
+                    username: username
+                }
+            }).then((response) => {
+                let data = response.data;
+                if (data.code === 1) {
+                    form.value = response.data.data;
+                    console.log("表单参数:", form.value)
+                    visible2.value = true;
+                } else {
+                    notification.error({ description: "查询商家信息失败！" });
+                }
+            }).catch((error) => {
+                console.error("请求失败:", error);
+                notification.error({ description: "请求失败，请稍后重试！" });
+            });
+        };
+
+        const handleSave = async () => {
+            try {
+                axios.put('/business/business/update', form.value).then((response) => {
+                    let data = response.data
+                    if (data.code == 1) {
+                        visible2.value = false;
+                        notification.success({ description: "更新商家信息成功！" });
+                        fetchData();
+                    } else {
+                        notification.error({ description: "更新商家信息失败！" });
+                    }
+                })
+            } catch (error) {
+                console.error('保存商家信息时发生错误:', error);
+            }
+        };
+
+        const handleCancel = () => {
+            visible.value = false;
+            form.value = { id: null, name: '', username: '', password: '', phone: '', sex: null, identity: null, idNumber: '' };
         };
 
         // 删除操作（示例）  
-        const handleDelete = (record) => {
-            console.log('Delete:', record);
-            // 实现删除逻辑，如发送删除请求到后端  
+        const handleDelete = (username, status) => {
+            form.value.username = username;
+            if (status === 1) {
+                form.value.status = 0;
+            } else {
+                form.value.status = 1;
+            }
+            console.log("停用请求参数:", form.value);
+            try {
+                axios.put('/business/business/update', form.value).then((response) => {
+                    let data = response.data
+                    if (data.code == 1) {
+                        visible2.value = false;
+                        notification.success({ description: "更改商家状态成功！" });
+                        fetchData();
+                    } else {
+                        notification.error({ description: "更改商家状态失败！" });
+                    }
+                })
+            } catch (error) {
+                console.error('保存商家信息时发生错误:', error);
+            }
         };
         onMounted(() => {
             fetchData();
@@ -224,11 +337,15 @@ export default defineComponent({
             PASSENGER_TYPE_ARRAY,
             business,
             visible,
+            visible2,
+            form,
             onAdd,
             handleOk,
             businessData,
             columns,
-            handleEdit,
+            showModal,
+            handleSave,
+            handleCancel,
             handleDelete,
         };
     }

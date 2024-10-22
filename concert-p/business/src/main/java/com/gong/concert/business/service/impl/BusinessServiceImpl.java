@@ -64,14 +64,18 @@ public class BusinessServiceImpl implements BusinessService {
         log.info("调用BusinessMapper映射selectByExample出参:{}",businessDB);
         if (businessDB == null){
             log.error("查找到的商户数为空");
-            throw new BusinessException(BusinessExceptionEnum.BUSINESS_NOT_EXIST);
+            throw new BusinessException(BusinessExceptionEnum.PASSWORD_IS_WARN);
+        }
+        if (businessDB.getStatus() == 0){
+            log.info("商家为停用状态");
+            throw new BusinessException(BusinessExceptionEnum.BUSINESS_IS_BAN);
         }
         if (!businessDB.getPassword().equals(password) || !businessDB.getUsername().equals(userName)){
             log.error("输入账户密码和实际账户密码:{},{},{},{}",userName,password,businessDB.getUsername(),businessDB.getPassword());
             throw new BusinessException(BusinessExceptionEnum.PASSWORD_IS_WARN);
         }
         BusinessLoginVO businessLoginVO = BeanUtil.copyProperties(businessDB, BusinessLoginVO.class);
-        String token = JwtUtil.createToken(businessLoginVO.getBusinessId(), businessLoginVO.getPhone());
+        String token = JwtUtil.createToken(businessLoginVO.getUsername(), businessLoginVO.getPhone());
         businessLoginVO.setToken(token);
         return businessLoginVO;
     }
@@ -127,18 +131,18 @@ public class BusinessServiceImpl implements BusinessService {
             //商家存在抛出异常
             throw new BusinessException(BusinessExceptionEnum.BUSINESS_NOT_EXIST);
         }
-        if (business.getPhone().length() != 11){
+        if (business.getPhone()!=null && business.getPhone().length() != 11 ){
             //手机号格式错误
             throw new BusinessException(BusinessExceptionEnum.PHONE_IS_ERROR);
         }
-        if (business.getIdNumber().length()!=18){
+        if (business.getIdNumber()!=null && business.getIdNumber().length()!=18){
             //身份证格式错误
             throw new BusinessException(BusinessExceptionEnum.IDNUMBER_IS_ERROR);
         }
 
         business.setUpdateTime(LocalDateTime.now());
         business.setUpdateUser("admin"); //先写死
-
+//        business.setUpdateUser(LoginBusinessContext.getId());
         int i = businessMapper.updateBusiness(business);
         if (i != 1){
             throw new BusinessException(BusinessExceptionEnum.BUSINESS_UPDATE_ERROR);
