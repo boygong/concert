@@ -1,4 +1,4 @@
-package com.gong.concert.controller;
+package com.gong.concert.users.controller;
 
 import com.gong.concert.common.resp.Result;
 import lombok.extern.slf4j.Slf4j;
