@@ -22,9 +22,9 @@ public class UsersController {
     @Autowired
     private UserService userService;
     @GetMapping("/{username}")
-    public Result queryByUserName(@PathVariable String username){
+    public User queryByUserName(@PathVariable String username){
         log.info("控制层入参:{}",username);
         User user = userService.getByUserName(username);
-        return Result.success(user);
+        return user;
     }
 }
