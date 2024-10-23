@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @Time 2024/10/22
  */
 
-@FeignClient("users")
+@FeignClient(name = "users",url = "${open-feign.user.api-url}/users/users")
 public interface UserClient {
-    @GetMapping("/users/{username}")
+    @GetMapping("/{username}")
     User findByUserName(@PathVariable("username") String username);
 }

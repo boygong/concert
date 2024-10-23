@@ -1,5 +1,8 @@
 package com.gong.concert.business.controller;
 
+import com.gong.concert.feign.clients.UserClient;
+import com.gong.concert.feign.pojo.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -9,8 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class HelloController {
+    @Autowired
+    private UserClient userClient;
     @GetMapping("/hello")
     public String hello(){
         return "Hello World! Business";
+    }
+
+    @GetMapping("/user")
+    public User testFeign(){
+        User user = userClient.findByUserName("user1");
+        return user;
     }
 }

@@ -1,11 +1,13 @@
 package com.gong.concert.business;
 
+import com.gong.concert.feign.config.DefaultFeignConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.Environment;
@@ -18,6 +20,7 @@ import org.springframework.core.env.Environment;
 @SpringBootApplication
 @Slf4j
 @MapperScan(basePackages = "com.gong.concert.*.mapper")
+@EnableFeignClients(basePackages = "com.gong.concert.feign.clients",defaultConfiguration = DefaultFeignConfiguration.class)
 @EnableAspectJAutoProxy
 @ComponentScan(basePackages = "com.gong")
 public class BusinessApplication {
