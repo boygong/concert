@@ -7,6 +7,7 @@ import lombok.Data;
 /**
  * @Author ToastFish
  * @Time 2024/10/11
+ * 业务统一抛出类
  */
 
 

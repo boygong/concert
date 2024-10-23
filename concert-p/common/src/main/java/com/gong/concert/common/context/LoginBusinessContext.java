@@ -17,8 +17,8 @@ public class LoginBusinessContext {
         return business.get();
     }
 
-    public static void setBusiness(BusinessLoginVO member) {
-        LoginBusinessContext.business.set(business.get());
+    public static void setBusiness(BusinessLoginVO business) {
+        LoginBusinessContext.business.set(business);
     }
 
     public static String getUsername() {

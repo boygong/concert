@@ -34,6 +34,7 @@ public class BusinessInterceptor implements HandlerInterceptor {
             JSONObject loginBusiness = JwtUtil.getJSONObject(token);
             log.info("当前商家会员：{}", loginBusiness);
             BusinessLoginVO business= JSONUtil.toBean(loginBusiness, BusinessLoginVO.class);
+            log.info("存入到线程中的会员:{}",business);
             LoginBusinessContext.setBusiness(business); //存入当前会员对象
         }
         log.info("BusinessInterceptor结束");
