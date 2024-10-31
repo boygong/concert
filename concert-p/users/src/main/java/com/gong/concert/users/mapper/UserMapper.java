@@ -1,5 +1,7 @@
 package com.gong.concert.users.mapper;
 
+import com.github.pagehelper.Page;
+import com.gong.concert.users.dto.QueryUserDTO;
 import com.gong.concert.users.entity.User;
 import org.apache.ibatis.annotations.Select;
 
@@ -11,4 +13,6 @@ import org.apache.ibatis.annotations.Select;
 public interface UserMapper {
     @Select("select * from  user u where u.username = #{username}")
     User selectByUserName(String username);
+
+    Page<User> pageQuery(QueryUserDTO dto);
 }

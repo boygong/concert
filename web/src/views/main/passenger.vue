@@ -322,7 +322,7 @@ export default defineComponent({
                         notification.success({ description: "更改商家状态成功！" });
                         fetchData();
                     } else {
-                        notification.error({ description: "更改商家状态失败！" });
+                        notification.error({ description: data.msg });
                     }
                 })
             } catch (error) {

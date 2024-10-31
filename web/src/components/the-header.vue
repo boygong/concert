@@ -18,6 +18,11 @@
                     <user-outlined/> &nbsp; 商家管理
                 </router-link>
             </a-menu-item>
+            <a-menu-item key="/admin-user">
+                <router-link to="/admin-user">
+                    <user-outlined/> &nbsp; 用户管理
+                </router-link>
+            </a-menu-item>
         </a-menu>
     </a-layout-header>
 </template>

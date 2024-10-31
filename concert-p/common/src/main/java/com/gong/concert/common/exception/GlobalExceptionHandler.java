@@ -7,9 +7,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.sql.SQLException;
-import java.sql.SQLNonTransientConnectionException;
-
 /**
  * @Author ToastFish
  * @Time 2024/10/11

@@ -23,6 +23,9 @@ const routes = [
     },{
       path:'passenger',
       component:()=>import('@/views/main/passenger.vue')
+    },{
+      path:'admin-user',
+      component:()=>import('@/views/main/admin-user.vue')
     }]
   },{
     path:'',
