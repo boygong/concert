@@ -12,7 +12,7 @@
           <a-select-option value="0">女</a-select-option>
           <a-select-option value="1">男</a-select-option>
         </a-select>
-        <a-input v-model="filters.phone" placeholder="手机号码" style="width: 150px; margin-right: 10px;" />
+        <a-input v-model:value="filters.phone" placeholder="手机号码" style="width: 150px; margin-right: 10px;" />
         <a-button type="primary" @click="fetchUsers">搜索</a-button>
       </div>
   
@@ -22,7 +22,6 @@
           <a-table-column title="序号" v-slot="{ index }">
             <span>{{ (page - 1) * size + index + 1 }}</span>
           </a-table-column>
-          <a-table-column title="用户ID" dataIndex="userId" />
           <a-table-column title="用户名" dataIndex="username" />
           <a-table-column title="姓名" dataIndex="name" />
           <a-table-column title="性别" v-slot="{ record }">
@@ -33,6 +32,12 @@
           <a-table-column title="身份证号" dataIndex="idNumber" />
           <a-table-column title="创建时间" v-slot="{ record }">
             <span>{{ formatDate(record?.createTime) }}</span>
+          </a-table-column>
+          <a-table-column title="操作">
+            <template #default="{ record }">
+              <a-button type="link" @click="editUser(record.username)">编辑</a-button>
+              <a-button type="link" @click="deleteUser(record.userId)">删除</a-button>
+            </template>
           </a-table-column>
         </a-table>
   
@@ -46,11 +51,40 @@
           </div>
         </div>
       </div>
+  
+      <!-- 编辑用户弹窗 -->
+      <a-modal v-model:visible="editModalVisible" title="编辑用户" @ok="saveUser" @cancel="editModalVisible = false">
+        <a-form>
+          <a-form-item label="用户名">
+            <a-input v-model:value="editUserData.username" disabled />
+          </a-form-item>
+          <a-form-item label="姓名">
+            <a-input v-model:value="editUserData.name" />
+          </a-form-item>
+          <a-form-item label="性别">
+            <a-select v-model:value="editUserData.sex">
+              <a-select-option value="0">女</a-select-option>
+              <a-select-option value="1">男</a-select-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item label="邮箱">
+            <a-input v-model:value="editUserData.email" />
+          </a-form-item>
+          <a-form-item label="手机号">
+            <a-input v-model:value="editUserData.phone" />
+          </a-form-item>
+          <a-form-item label="身份证号">
+            <a-input v-model:value="editUserData.idNumber" />
+          </a-form-item>
+        </a-form>
+      </a-modal>
     </div>
   </template>
   
   <script>
   import { defineComponent, ref, computed, reactive } from 'vue';
+  import { notification } from "ant-design-vue";
+
   import axios from 'axios';
   
   export default defineComponent({
@@ -62,8 +96,18 @@
       const size = ref(10);
       const total = ref(0);
       const inputPage = ref(page.value);
+      const editModalVisible = ref(false);
+      let editUserData = ref({
+        userId: undefined,
+        name: undefined,
+        username: undefined,
+        password: undefined,
+        email: undefined,
+        idNumber: undefined,
+        sex: undefined,
+        phone: undefined
+      });
   
-      // 将 filters 定义为响应式对象
       const filters = reactive({
         userId: '',
         name: '',
@@ -99,6 +143,52 @@
           console.error('请求失败:', error);
         } finally {
           loading.value = false;
+        }
+      };
+  
+      const editUser = async (username) => {
+        try {
+          const response = await axios.get('/users/users'+'/'+username);
+          let data = response.data;
+          if (data.code === 1) {
+            console.log("后端数据:",data);
+            // Object.assign(editUserData, response.data); // 将返回的数据赋值给 editUserData
+            editUserData.value = data.data;
+            console.log("回显数据:",editUserData.value);
+            editModalVisible.value = true; // 显示编辑弹窗
+          }else{
+            console.log("后端数据:",data);
+            notification.error({ description: data.msg });
+          }
+        } catch (error) {
+          console.error('获取用户信息失败:', error);
+        }
+      };
+  
+      const saveUser = async () => {
+        // try {
+        //   const response = await axios.put(`/users/users/${editUserData.userId}`, editUserData);
+        //   if (response.data.code === 1) {
+        //     editModalVisible.value = false; // 关闭弹窗
+        //     fetchUsers(); // 刷新用户列表
+        //   } else {
+        //     console.error(response.data.msg);
+        //   }
+        // } catch (error) {
+        //   console.error('保存用户信息失败:', error);
+        // }
+      };
+  
+      const deleteUser = async (userId) => {
+        try {
+          const response = await axios.delete(`/users/users/${userId}`);
+          if (response.data.code === 1) {
+            fetchUsers(); // 刷新用户列表
+          } else {
+            console.error(response.data.msg);
+          }
+        } catch (error) {
+          console.error('删除用户失败:', error);
         }
       };
   
@@ -151,13 +241,22 @@
         formatDate,
         inputPage,
         filters,
-        fetchUsers
+        fetchUsers,
+        editUser,
+        editModalVisible,
+        editUserData,
+        saveUser,
+        deleteUser
       };
     }
   });
   </script>
   
   <style scoped>
-
-</style>
+  .table-container {
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  </style>
   
