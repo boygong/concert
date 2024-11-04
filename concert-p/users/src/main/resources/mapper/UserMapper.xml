@@ -24,5 +24,6 @@
                 and phone like concat('%',#{phone},'%')
             </if>
         </where>
+        order by user_id+0
     </select>
 </mapper>

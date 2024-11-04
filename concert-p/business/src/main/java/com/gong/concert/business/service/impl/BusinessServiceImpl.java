@@ -30,6 +30,7 @@ import java.util.List;
 public class BusinessServiceImpl implements BusinessService {
     @Autowired
     private BusinessMapper businessMapper;
+
     @Override
     public List<BusinessVO> getList(BusinessListDTO dto) {
         log.info("获取商家列表Service层");
@@ -37,16 +38,16 @@ public class BusinessServiceImpl implements BusinessService {
         log.trace("调用映射接口:getBusinessList");
         try {
             List<Business> businessList = businessMapper.selectListByExample(dto);
-            log.trace("映射出参:{}",businessMapper.selectListByExample(dto));
-            log.trace("出参：{}",businessList);
+            log.trace("映射出参:{}", businessMapper.selectListByExample(dto));
+            log.trace("出参：{}", businessList);
             businessList.stream().forEach(business -> {
                 BusinessVO businessVO = new BusinessVO();
-                BeanUtil.copyProperties(business,businessVO); //拷贝商家类
+                BeanUtil.copyProperties(business, businessVO); //拷贝商家类
                 resp.add(businessVO);
             });
             return resp;
-        }catch (Exception e){
-            log.error("调用失败,返回",e);
+        } catch (Exception e) {
+            log.error("调用失败,返回", e);
         }
         return null;
     }
@@ -56,22 +57,22 @@ public class BusinessServiceImpl implements BusinessService {
         log.info("商家登录Service层");
         String userName = loginDTO.getUsername();
         String password = loginDTO.getPassword();
-        log.info("参数校验:{},{}",userName,password);
+        log.info("参数校验:{},{}", userName, password);
         Business business = new Business();
         business.setUsername(userName);
         business.setPassword(password);
         Business businessDB = businessMapper.selectByExample(business);
-        log.info("调用BusinessMapper映射selectByExample出参:{}",businessDB);
-        if (businessDB == null){
+        log.info("调用BusinessMapper映射selectByExample出参:{}", businessDB);
+        if (businessDB == null) {
             log.error("查找到的商户数为空");
             throw new BusinessException(BusinessExceptionEnum.PASSWORD_IS_WARN);
         }
-        if (businessDB.getStatus() == 0){
+        if (businessDB.getStatus() == 0) {
             log.info("商家为停用状态");
             throw new BusinessException(BusinessExceptionEnum.BUSINESS_IS_BAN);
         }
-        if (!businessDB.getPassword().equals(password) || !businessDB.getUsername().equals(userName)){
-            log.error("输入账户密码和实际账户密码:{},{},{},{}",userName,password,businessDB.getUsername(),businessDB.getPassword());
+        if (!businessDB.getPassword().equals(password) || !businessDB.getUsername().equals(userName)) {
+            log.error("输入账户密码和实际账户密码:{},{},{},{}", userName, password, businessDB.getUsername(), businessDB.getPassword());
             throw new BusinessException(BusinessExceptionEnum.PASSWORD_IS_WARN);
         }
         BusinessLoginVO businessLoginVO = BeanUtil.copyProperties(businessDB, BusinessLoginVO.class);
@@ -87,15 +88,15 @@ public class BusinessServiceImpl implements BusinessService {
         Business toDB = new Business();
         toDB.setUsername(username);
         Business businessDB = businessMapper.selectByExample(toDB); //通过用户名获取商家
-        if (businessDB != null){
+        if (businessDB != null) {
             //商家存在抛出异常
             throw new BusinessException(BusinessExceptionEnum.BUSINESS_IS_EXIST);
         }
-        if (business.getPhone().length() != 11){
+        if (business.getPhone().length() != 11) {
             //手机号格式错误
             throw new BusinessException(BusinessExceptionEnum.PHONE_IS_ERROR);
         }
-        if (business.getIdNumber().length()!=18){
+        if (business.getIdNumber().length() != 18) {
             //身份证格式错误
             throw new BusinessException(BusinessExceptionEnum.IDNUMBER_IS_ERROR);
         }
@@ -124,21 +125,23 @@ public class BusinessServiceImpl implements BusinessService {
     public void update(Business business) {
         log.info("商家修改Service层,开始数据校验");
         String username = business.getUsername();
-        if (username.equals(LoginBusinessContext.getUsername())){
+        if (username.equals(LoginBusinessContext.getUsername())) {
             throw new BusinessException(BusinessExceptionEnum.Not_MODIFY_YOURSELF);
         }
         Business toDB = new Business();
         toDB.setUsername(username);
         Business businessDB = businessMapper.selectByExample(toDB); //通过用户名获取商家
-        if (businessDB == null){
+        if (businessDB == null) {
             //商家存在抛出异常
             throw new BusinessException(BusinessExceptionEnum.BUSINESS_NOT_EXIST);
         }
-        if (business.getPhone()!=null && business.getPhone().length() != 11 ){
-            //手机号格式错误
-            throw new BusinessException(BusinessExceptionEnum.PHONE_IS_ERROR);
+        if (business.getPhone() != null) {
+            if (business.getPhone().length() != 11) {
+                //手机号格式错误
+                throw new BusinessException(BusinessExceptionEnum.PHONE_IS_ERROR);
+            }
         }
-        if (business.getIdNumber()!=null && business.getIdNumber().length()!=18){
+        if (business.getIdNumber() != null && businessDB.getIdNumber() != null && business.getIdNumber().length() != 18) {
             //身份证格式错误
             throw new BusinessException(BusinessExceptionEnum.IDNUMBER_IS_ERROR);
         }
@@ -147,7 +150,7 @@ public class BusinessServiceImpl implements BusinessService {
 //        business.setUpdateUser("admin"); //先写死
         business.setUpdateUser(LoginBusinessContext.getUsername());
         int i = businessMapper.updateBusiness(business);
-        if (i != 1){
+        if (i != 1) {
             throw new BusinessException(BusinessExceptionEnum.BUSINESS_UPDATE_ERROR);
         }
     }
