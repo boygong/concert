@@ -2,6 +2,7 @@ package com.gong.concert.users.service;
 
 import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.users.dto.QueryUserDTO;
+import com.gong.concert.users.dto.SaveUserDTO;
 import com.gong.concert.users.entity.User;
 
 /**
@@ -12,4 +13,6 @@ public interface UserService {
     User getByUserName(String username);
 
     PageResult pageQuery(QueryUserDTO dto);
+
+    int save(SaveUserDTO dto);
 }

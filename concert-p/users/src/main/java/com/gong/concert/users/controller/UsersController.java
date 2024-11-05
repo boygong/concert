@@ -3,6 +3,7 @@ package com.gong.concert.users.controller;
 import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.resp.Result;
 import com.gong.concert.users.dto.QueryUserDTO;
+import com.gong.concert.users.dto.SaveUserDTO;
 import com.gong.concert.users.entity.User;
 import com.gong.concert.users.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -32,5 +33,12 @@ public class UsersController {
         log.info("进入分页查询控制层:{}",dto);
         PageResult pageResult = userService.pageQuery(dto);
         return Result.success(pageResult);
+    }
+
+    @PostMapping("/save")
+    public int save(@RequestBody SaveUserDTO dto){
+        log.info("进入分页查询控制层:{}",dto);
+        int flag = userService.save(dto);
+        return flag;
     }
 }

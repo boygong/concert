@@ -15,4 +15,6 @@ public interface UserMapper {
     User selectByUserName(String username);
 
     Page<User> pageQuery(QueryUserDTO dto);
+
+    int save(User user);
 }

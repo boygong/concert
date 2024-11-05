@@ -26,4 +26,9 @@
         </where>
         order by user_id+0
     </select>
+
+    <insert id="save" >
+        insert into user values (#{userId},#{name},#{username},#{password},#{avatar},#{email}
+                                ,#{idNumber},#{sex},#{createTime},#{phone})
+    </insert>
 </mapper>
