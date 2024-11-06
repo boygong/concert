@@ -10,6 +10,7 @@
         <module>gateway</module>
         <module>users</module>
         <module>feign-api</module>
+        <module>concert</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
