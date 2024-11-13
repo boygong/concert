@@ -29,7 +29,7 @@ public class Concert {
     private LocalDateTime createTime;//创建时间
     private LocalDateTime updateTime;//更新时间
     private LocalDateTime beginTime;//演出开始时间
-    private LocalDateTime createUser;//创建人
-    private LocalDateTime updateUser;//更新人
-    private LocalDateTime isSelected;//是否可以选座，0可选座位 1不可选 2可选等级座位
+    private String createUser;//创建人
+    private String updateUser;//更新人
+    private Short isSelected;//是否可以选座，0可选座位 1不可选 2可选等级座位
 }

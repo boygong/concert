@@ -26,10 +26,10 @@ public class SaveConcertDTO {
     private Integer number;
     private Short type;
     private String player;
-    private LocalDateTime createTime;
-    private LocalDateTime updateTime;
-    private LocalDateTime beginTime;
-    private LocalDateTime createUser;
-    private LocalDateTime updateUser;
-    private LocalDateTime isSelected;
+    private LocalDateTime createTime;//创建时间
+    private LocalDateTime updateTime;//更新时间
+    private LocalDateTime beginTime;//演出开始时间
+    private String createUser;//创建人
+    private String updateUser;//更新人
+    private Short isSelected;//是否可以选座，0可选座位 1不可选 2可选等级座位
 }

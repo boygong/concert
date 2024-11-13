@@ -3,4 +3,14 @@
 
 <mapper namespace="com.gong.concert.concert.mapper.SeatMapper">
 
+    <insert id="insertSeat">
+        INSERT INTO seats(seat_id, concert_id, fee, seat_status, seat_type, seat_row, seat_col)
+        VALUES (#{seatId},
+                #{concertId},
+                #{fee},
+                #{seatStatus},
+                #{seatType},
+                #{seatRow},
+                #{seatCol})
+    </insert>
 </mapper>

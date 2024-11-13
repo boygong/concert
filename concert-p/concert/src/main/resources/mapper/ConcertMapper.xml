@@ -3,4 +3,41 @@
 
 <mapper namespace="com.gong.concert.concert.mapper.ConcertMapper">
 
+    <insert id="insertConcert">
+        INSERT INTO concert (
+        concert_id,
+        theater_id,
+        name,
+        low_price,
+        status,
+        number,
+        type,
+        player,
+        create_time,
+        begin_time,
+        create_user,
+        is_selected
+        <if test="updateTime != null">, update_time</if>
+        <if test="updateUser != null">, update_user</if>
+        <if test="describe != null and describe != ''">, `describe`</if>
+        <if test="location != null and location != ''">, location</if>
+        ) VALUES (
+        #{concertId},
+        #{theaterId},
+        #{name},
+        #{lowPrice},
+        #{status},
+        #{number},
+        #{type},
+        #{player},
+        #{createTime},
+        #{beginTime},
+        #{createUser},
+        #{isSelected}
+        <if test="updateTime != null">, #{updateTime}</if>
+        <if test="updateUser != null">, #{updateUser}</if>
+        <if test="describe != null and describe != ''">, #{describe}</if>
+        <if test="location != null and location != ''">, #{location}</if>
+        )
+    </insert>
 </mapper>
