@@ -2,17 +2,13 @@ package com.gong.concert.concert.controller;
 
 import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.resp.Result;
-import com.gong.concert.concert.dto.QueryConcertByPage;
+import com.gong.concert.concert.dto.QueryConcertByPageDTO;
 import com.gong.concert.concert.dto.SaveConcertDTO;
 import com.gong.concert.concert.service.ConcertService;
+import com.gong.concert.concert.vo.ConcertVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author ToastFish
@@ -49,9 +45,21 @@ public class ConcertController {
      * @return: com.gong.concert.common.resp.Result
     */
     @PostMapping("/pageQuery")
-    public Result pageQuery(@RequestBody QueryConcertByPage dto){
+    public Result pageQuery(@RequestBody QueryConcertByPageDTO dto){
         PageResult pageResult = concertService.pageQuery(dto);
         return Result.success(pageResult);
+    }
+
+    /**
+     * @description:根据演唱会id查询演唱会
+     * @author: gongyuankang
+     * @date: 2024/11/19 0:25
+     * @return: com.gong.concert.common.resp.Result<com.gong.concert.concert.vo.ConcertVO>
+    */
+    @GetMapping("/getById")
+    public Result<ConcertVO> getById(@RequestParam String concertId){
+        ConcertVO vo = concertService.getById(concertId);
+        return Result.success(vo);
     }
 
     /**

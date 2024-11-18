@@ -1,9 +1,8 @@
 package com.gong.concert.concert.mapper;
 
 import com.github.pagehelper.Page;
-import com.gong.concert.concert.dto.QueryConcertByPage;
+import com.gong.concert.concert.dto.QueryConcertByPageDTO;
 import com.gong.concert.concert.entity.Concert;
-import com.gong.concert.concert.service.ConcertService;
 
 /**
  * @Author ToastFish
@@ -12,5 +11,5 @@ import com.gong.concert.concert.service.ConcertService;
 public interface ConcertMapper {
     int insertConcert(Concert concert);
 
-    Page<Concert> pageQuery(QueryConcertByPage dto);
+    Page<Concert> pageQuery(QueryConcertByPageDTO dto);
 }

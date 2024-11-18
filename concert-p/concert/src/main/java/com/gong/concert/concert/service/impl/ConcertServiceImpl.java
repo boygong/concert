@@ -1,11 +1,11 @@
 package com.gong.concert.concert.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.gong.concert.common.context.LoginBusinessContext;
 import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.util.SnowUtil;
-import com.gong.concert.concert.dto.QueryConcertByPage;
+import com.gong.concert.concert.dto.QueryConcertByPageDTO;
 import com.gong.concert.concert.dto.SaveConcertDTO;
 import com.gong.concert.concert.entity.Concert;
 import com.gong.concert.concert.entity.Seat;
@@ -14,12 +14,12 @@ import com.gong.concert.concert.mapper.ConcertMapper;
 import com.gong.concert.concert.mapper.SeatMapper;
 import com.gong.concert.concert.mapper.TheaterMapper;
 import com.gong.concert.concert.service.ConcertService;
+import com.gong.concert.concert.vo.ConcertVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 /**
@@ -76,13 +76,25 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     @Override
-    public PageResult pageQuery(QueryConcertByPage dto) {
+    public PageResult pageQuery(QueryConcertByPageDTO dto) {
         log.info("演唱会分页查询进入Service层:{},{}",dto.getPage(),dto.getSize());
         //开始分页查询
         PageHelper.startPage(dto.getPage(), dto.getSize());
         Page<Concert> page = concertMapper.pageQuery(dto);
         PageResult pageResult = new PageResult(page.getTotal(), page.getResult());
         return pageResult;
+    }
+
+    @Override
+    public ConcertVO getById(String concertId) {
+        log.info("演唱会查单个进入Service层:{}",concertId);
+        QueryConcertByPageDTO dto = new QueryConcertByPageDTO();//省力只想写一个sql了
+        dto.setConcertId(concertId);
+        Page<Concert> concerts = concertMapper.pageQuery(dto);
+        Concert concert = concerts.get(0);
+        ConcertVO concertVO = new ConcertVO();
+        BeanUtil.copyProperties(concert,concertVO);
+        return concertVO;
     }
 
     private void generateSeats(Theater theater, String concertId) {
