@@ -40,4 +40,22 @@
         <if test="location != null and location != ''">, #{location}</if>
         )
     </insert>
+
+    <select id="pageQuery" resultType="com.gong.concert.concert.entity.Concert">
+        select * from concert
+        <where>
+            <if test="concertId!=null and concertId!=''">and concert_id = #{concertId}</if>
+            <if test="theaterId!=null and theaterId!=''">and theater_id = #{theaterId}</if>
+            <if test="name!=null and name!=''">and name like concat('%',#{name},'%')</if>
+            <if test="lowFee!=null and lowFee!=''">and low_price &gt;= #{lowFee}</if>
+            <if test="highFee!=null and highFee!=''">and low_price &lt;= #{highFee}</if>
+            <if test="status!=null">and status = #{status}</if>
+            <if test="location!=null and location!=''">and location like concat('%',#{location},'%')</if>
+            <if test="describe!=null and describe!=''">and `describe` like concat('%',#{describe},'%')</if>
+            <if test="type!=null">and type = #{type}</if>
+            <if test="player!=null and player!=''">and `player` like concat('%',#{player},'%')</if>
+
+            <if test="isSelected!=null">and is_selected = #{isSelected}</if>
+        </where>
+    </select>
 </mapper>

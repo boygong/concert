@@ -1,5 +1,7 @@
 package com.gong.concert.concert.service;
 
+import com.gong.concert.common.resp.PageResult;
+import com.gong.concert.concert.dto.QueryConcertByPage;
 import com.gong.concert.concert.dto.SaveConcertDTO;
 
 /**
@@ -9,4 +11,6 @@ import com.gong.concert.concert.dto.SaveConcertDTO;
 
 public interface ConcertService {
     void saveConcert(SaveConcertDTO dto);
+
+    PageResult pageQuery(QueryConcertByPage dto);
 }

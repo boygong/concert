@@ -1,7 +1,11 @@
 package com.gong.concert.concert.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.gong.concert.common.context.LoginBusinessContext;
+import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.util.SnowUtil;
+import com.gong.concert.concert.dto.QueryConcertByPage;
 import com.gong.concert.concert.dto.SaveConcertDTO;
 import com.gong.concert.concert.entity.Concert;
 import com.gong.concert.concert.entity.Seat;
@@ -50,7 +54,7 @@ public class ConcertServiceImpl implements ConcertService {
         concert.setTheaterId(dto.getTheaterId());
         concert.setName(dto.getName());
         concert.setLowPrice(dto.getLowPrice());
-        concert.setStatus((short) 0);
+        concert.setStatus((short) -1);//状态 -1待审核 0 待售 1售卖中 2 停售 3 售罄
         concert.setLocation(theater.getCity());
         concert.setDescribe(dto.getDescribe());
         concert.setNumber(theater.getSeatNum());
@@ -69,6 +73,16 @@ public class ConcertServiceImpl implements ConcertService {
 
         // 根据展厅的行数和列数生成座位，并插入到 seats 表
         generateSeats(theater, concertId);
+    }
+
+    @Override
+    public PageResult pageQuery(QueryConcertByPage dto) {
+        log.info("演唱会分页查询进入Service层:{},{}",dto.getPage(),dto.getSize());
+        //开始分页查询
+        PageHelper.startPage(dto.getPage(), dto.getSize());
+        Page<Concert> page = concertMapper.pageQuery(dto);
+        PageResult pageResult = new PageResult(page.getTotal(), page.getResult());
+        return pageResult;
     }
 
     private void generateSeats(Theater theater, String concertId) {

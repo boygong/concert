@@ -1,6 +1,8 @@
 package com.gong.concert.concert.controller;
 
+import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.resp.Result;
+import com.gong.concert.concert.dto.QueryConcertByPage;
 import com.gong.concert.concert.dto.SaveConcertDTO;
 import com.gong.concert.concert.service.ConcertService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,4 +42,23 @@ public class ConcertController {
             return Result.error("新增演唱会失败");
         }
     }
+    /**
+     * @description: 分页查询演唱会信息
+     * @author: gongyuankang
+     * @date: 2024/11/13 17:23
+     * @return: com.gong.concert.common.resp.Result
+    */
+    @PostMapping("/pageQuery")
+    public Result pageQuery(@RequestBody QueryConcertByPage dto){
+        PageResult pageResult = concertService.pageQuery(dto);
+        return Result.success(pageResult);
+    }
+
+    /**
+     * @description: 创建演唱会交易订单
+     * @author: gongyuankang
+     * @date: 2024/11/18 23:35
+     * @return:
+    */
+//    public Result createOrder()
 }
