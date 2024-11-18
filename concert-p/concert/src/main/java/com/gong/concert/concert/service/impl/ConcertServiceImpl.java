@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @Author ToastFish
@@ -90,10 +91,13 @@ public class ConcertServiceImpl implements ConcertService {
         log.info("演唱会查单个进入Service层:{}",concertId);
         QueryConcertByPageDTO dto = new QueryConcertByPageDTO();//省力只想写一个sql了
         dto.setConcertId(concertId);
-        Page<Concert> concerts = concertMapper.pageQuery(dto);
+        Page<Concert> concerts = concertMapper.pageQuery(dto);//查出演唱会信息
         Concert concert = concerts.get(0);
         ConcertVO concertVO = new ConcertVO();
-        BeanUtil.copyProperties(concert,concertVO);
+        BeanUtil.copyProperties(concert,concertVO);//封装演唱会信息
+
+        List<Seat> seatList = seatMapper.getByConcertId(concertId); //查出演唱会相关座位信息
+        concertVO.setSeatList(seatList); //封装座位
         return concertVO;
     }
 

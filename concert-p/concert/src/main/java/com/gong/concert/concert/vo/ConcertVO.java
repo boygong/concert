@@ -1,10 +1,13 @@
 package com.gong.concert.concert.vo;
 
+import com.gong.concert.concert.entity.Seat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @Author ToastFish
@@ -13,6 +16,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ConcertVO {
     private String concertId; //演唱会id
     private String theaterId;//关联影厅id
@@ -30,4 +34,6 @@ public class ConcertVO {
     private String createUser;//创建人
     private String updateUser;//更新人
     private Short isSelected;//是否可以选座，0可选座位 1不可选 2可选等级座位
+
+    private List<Seat> seatList;//演唱会相关的座位列表
 }

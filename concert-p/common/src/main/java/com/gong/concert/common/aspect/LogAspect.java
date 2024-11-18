@@ -1,6 +1,7 @@
 package com.gong.concert.common.aspect;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.spring.PropertyPreFilters;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -86,7 +87,7 @@ public class LogAspect {
         PropertyPreFilters filters = new PropertyPreFilters();
         PropertyPreFilters.MySimplePropertyPreFilter excludefilter = filters.addFilter();
         excludefilter.addExcludes(excludeProperties);
-        LOG.info("返回结果: {}", JSONObject.toJSONString(result, excludefilter));
+        LOG.info("\n返回结果: \n{}", JSONObject.toJSONString(result, excludefilter, SerializerFeature.PrettyFormat));
         LOG.info("------------- 结束 耗时：{} ms -------------", System.currentTimeMillis() - startTime);
         return result;
     }
