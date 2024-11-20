@@ -1,0 +1,10 @@
+# 阿里云OSS配置
+alioss:
+  endpoint: https://oss-cn-beijing.aliyuncs.com  # 第1项配置：要带上 https:// ,上传时要使用的
+  accessKeyId: LTAI5tJa9gErSLEVv1wsbxvN       # 第2项配置  根据自己的帐号配置
+  accessKeySecret: oUL3aCbzf5p75T2CPSlPAqgvbe91bu   # 第3项配置  根据自己的帐号配置
+  bucketName: concert-p        # 第4项配置  存储空间名称
+  urlPrefix: https://concert-p.oss-cn-beijing.aliyuncs.com/ # 第5项配置  Bucket域名，访问文件时作为URL前缀，注意要加上 https:// 和 结尾带上 /
+open-feign:
+  user:
+    api-url: http://127.0.0.1:28001
