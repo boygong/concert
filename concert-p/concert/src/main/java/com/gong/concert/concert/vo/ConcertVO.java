@@ -21,6 +21,7 @@ public class ConcertVO {
     private String concertId; //演唱会id
     private String theaterId;//关联影厅id
     private String name;//演唱会名称
+    private String photo; //演唱会图片
     private Double lowPrice;//演唱会最低价格
     private Short status;//状态 0 待售 1售卖中 2 停售 3 售罄
     private String location;//冗余字段（所在地）

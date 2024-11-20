@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 public class SaveConcertDTO {
     private String theaterId;
     private String name;
+    private String photo; //演唱会图片
     private Double lowPrice;
     private Short status;
     private String location;

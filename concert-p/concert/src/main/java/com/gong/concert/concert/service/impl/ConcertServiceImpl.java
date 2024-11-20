@@ -54,6 +54,7 @@ public class ConcertServiceImpl implements ConcertService {
         concert.setConcertId(SnowUtil.getSnowflakeNextIdStr());
         concert.setTheaterId(dto.getTheaterId());
         concert.setName(dto.getName());
+        concert.setPhoto(dto.getPhoto());
         concert.setLowPrice(dto.getLowPrice());
         concert.setStatus((short) -1);//状态 -1待审核 0 待售 1售卖中 2 停售 3 售罄
         concert.setLocation(theater.getCity());
