@@ -26,6 +26,9 @@ const routes = [
     },{
       path:'admin-user',
       component:()=>import('@/views/main/admin-user.vue')
+    },{
+      path:'concert',
+      component:()=>import('@/views/main/concert.vue')
     }]
   },{
     path:'',

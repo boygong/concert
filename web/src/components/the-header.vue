@@ -23,6 +23,11 @@
                     <user-outlined/> &nbsp; 用户管理
                 </router-link>
             </a-menu-item>
+            <a-menu-item key="/concert">
+                <router-link to="/concert">
+                    <user-outlined/> &nbsp; 演唱会管理
+                </router-link>
+            </a-menu-item>
         </a-menu>
     </a-layout-header>
 </template>

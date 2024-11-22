@@ -20,7 +20,7 @@ import java.util.UUID;
  */
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/common")
 @Slf4j
 public class CommonController {
     @Autowired

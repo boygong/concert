@@ -79,7 +79,7 @@ public class ConcertServiceImpl implements ConcertService {
 
     @Override
     public PageResult pageQuery(QueryConcertByPageDTO dto) {
-        log.info("演唱会分页查询进入Service层:{},{}",dto.getPage(),dto.getSize());
+        log.info("演唱会分页查询进入Service层:{},{},{}",dto.getPage(),dto.getSize(),dto);
         //开始分页查询
         PageHelper.startPage(dto.getPage(), dto.getSize());
         Page<Concert> page = concertMapper.pageQuery(dto);
