@@ -111,7 +111,7 @@ public class ConcertServiceImpl implements ConcertService {
     public int stopSale(String concertId) {
         log.info("演唱会停售进入Service层:{},{}", Method.GET,concertId);
         int flag = 0; //成功标记
-        int i = concertMapper.updateStatusTo2(concertId, ConcertStatusEnum.HALT_THE_SALES.getStatus()); //设置停售
+        int i = concertMapper.updateStatus(concertId, ConcertStatusEnum.HALT_THE_SALES.getStatus()); //设置停售
         if (i == 0){
             throw new BusinessException(BusinessExceptionEnum.UPDATE_CONCERT_FAIL);
         }
@@ -124,7 +124,35 @@ public class ConcertServiceImpl implements ConcertService {
             if (seat.getSeatStatus()==6){ //售出状态
                 //TODO 释放座位,退款
             }
-            seat.setSeatStatus(ConcertStatusEnum.HALT_THE_SALES.getStatus()); //停售
+            if (seat.getSeatStatus()==2){ //维修状态
+                continue; //跳过这个座位
+            }
+            seat.setSeatStatus((short) 3); //停售
+            int j = seatMapper.updateStatus(seat.getConcertId(),seat.getSeatId(),seat.getSeatStatus());
+            if (j == 0){
+                throw new BusinessException(BusinessExceptionEnum.UPDATE_SEAT_FAIL);
+            }
+        }
+        flag = 1;
+        return flag;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class) // 确保事务回滚
+    public int startSale(String concertId) {
+        log.info("演唱会启售进入Service层:{},{}", Method.GET,concertId);
+        int flag = 0;
+        int i = concertMapper.updateStatus(concertId, ConcertStatusEnum.FOR_SALE.getStatus()); //设置停售
+        if (i == 0){
+            throw new BusinessException(BusinessExceptionEnum.UPDATE_CONCERT_FAIL);
+        }
+        log.info("启动座位");
+        List<Seat> seats = seatMapper.getByConcertId(concertId);
+        for (Seat seat : seats) {
+            if (seat.getSeatStatus()==2){ //维修状态
+                continue; //跳过这个座位
+            }
+            seat.setSeatStatus((short)0); //启售
             int j = seatMapper.updateStatus(seat.getConcertId(),seat.getSeatId(),seat.getSeatStatus());
             if (j == 0){
                 throw new BusinessException(BusinessExceptionEnum.UPDATE_SEAT_FAIL);

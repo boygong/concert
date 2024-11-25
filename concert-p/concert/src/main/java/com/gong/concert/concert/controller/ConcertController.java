@@ -73,9 +73,15 @@ public class ConcertController {
         return i==1? Result.success():Result.error("停售失败");
     }
 
-//    @PutMapping("/start")
-//    public Result startSale(@RequestParam String concertId){
-//        int i = concertService.startSale(concertId);
-//        return i==1? Result.success():Result.error("起售失败");
-//    }
+    /**
+     * @description: 起售演唱会
+     * @author: gongyuankang
+     * @date: 2024/11/25 22:58
+     * @return: com.gong.concert.common.resp.Result
+    */
+    @PutMapping("/start")
+    public Result startSale(@RequestParam String concertId){
+        int i = concertService.startSale(concertId);
+        return i==1? Result.success():Result.error("启售失败");
+    }
 }

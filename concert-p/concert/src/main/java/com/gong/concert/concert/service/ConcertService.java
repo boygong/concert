@@ -18,4 +18,6 @@ public interface ConcertService {
     ConcertVO getById(String concertId);
 
     int stopSale(String concertId);
+
+    int startSale(String concertId);
 }
