@@ -61,12 +61,21 @@ public class ConcertController {
         ConcertVO vo = concertService.getById(concertId);
         return Result.success(vo);
     }
-
     /**
-     * @description: 创建演唱会交易订单
+     * @description: 停售演唱会
      * @author: gongyuankang
-     * @date: 2024/11/18 23:35
-     * @return:
+     * @date: 2024/11/25 21:20
+     * @return: com.gong.concert.common.resp.Result
     */
-//    public Result createOrder()
+    @PutMapping("/stop")
+    public Result stopSale(@RequestParam String concertId){
+        int i = concertService.stopSale(concertId);
+        return i==1? Result.success():Result.error("停售失败");
+    }
+
+//    @PutMapping("/start")
+//    public Result startSale(@RequestParam String concertId){
+//        int i = concertService.startSale(concertId);
+//        return i==1? Result.success():Result.error("起售失败");
+//    }
 }

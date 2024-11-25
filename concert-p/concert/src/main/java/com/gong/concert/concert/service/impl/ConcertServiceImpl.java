@@ -1,8 +1,12 @@
 package com.gong.concert.concert.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.http.Method;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.gong.concert.common.enums.ConcertStatusEnum;
+import com.gong.concert.common.exception.BusinessException;
+import com.gong.concert.common.exception.BusinessExceptionEnum;
 import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.util.SnowUtil;
 import com.gong.concert.concert.dto.QueryConcertByPageDTO;
@@ -102,6 +106,34 @@ public class ConcertServiceImpl implements ConcertService {
         return concertVO;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class) // 确保事务回滚
+    public int stopSale(String concertId) {
+        log.info("演唱会停售进入Service层:{},{}", Method.GET,concertId);
+        int flag = 0; //成功标记
+        int i = concertMapper.updateStatusTo2(concertId, ConcertStatusEnum.HALT_THE_SALES.getStatus()); //设置停售
+        if (i == 0){
+            throw new BusinessException(BusinessExceptionEnum.UPDATE_CONCERT_FAIL);
+        }
+        log.info("开始释放、停售、退款演唱会订单、座位");
+        List<Seat> seats = seatMapper.getByConcertId(concertId);
+        for (Seat seat : seats) {
+            if (seat.getSeatStatus()==5){ //待支付状态
+               //TODO 释放座位
+            }
+            if (seat.getSeatStatus()==6){ //售出状态
+                //TODO 释放座位,退款
+            }
+            seat.setSeatStatus(ConcertStatusEnum.HALT_THE_SALES.getStatus()); //停售
+            int j = seatMapper.updateStatus(seat.getConcertId(),seat.getSeatId(),seat.getSeatStatus());
+            if (j == 0){
+                throw new BusinessException(BusinessExceptionEnum.UPDATE_SEAT_FAIL);
+            }
+        }
+        flag = 1;
+        return flag;
+    }
+
     private void generateSeats(Theater theater, String concertId) {
         for (int row = 1; row <= theater.getRow(); row++) {
             for (int col = 1; col <= theater.getCol(); col++) {
@@ -113,7 +145,7 @@ public class ConcertServiceImpl implements ConcertService {
                 seat.setSeatCol(col);
                 //seat.setSeatNumber("R" + row + "C" + col); // 座位编号
                 seat.setSeatStatus((short)0); // 初始状态为可售
-                seat.setFee((double)100); // 你可以根据需要设置不同的票价
+                seat.setFee((double)100); // 可以根据需要设置不同的票价
                 log.info("本次插入座位信息:{}",seat);
                 seatMapper.insertSeat(seat);
             }

@@ -16,4 +16,6 @@ public interface ConcertService {
     PageResult pageQuery(QueryConcertByPageDTO dto);
 
     ConcertVO getById(String concertId);
+
+    int stopSale(String concertId);
 }
