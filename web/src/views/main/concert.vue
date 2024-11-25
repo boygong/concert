@@ -2,6 +2,9 @@
     <div style="padding: 20px;">
         <h2>演唱会管理界面</h2>
 
+        <!-- 新增演唱会按钮 -->
+        <a-button type="primary" @click="openAddConcertModal">新增演唱会</a-button>
+
         <!-- 搜索表单 -->
         <a-form layout="inline" style="margin-bottom: 20px;">
             <a-form-item label="演唱会ID">
@@ -21,10 +24,7 @@
                     :max="filters.highFee" addon-before="￥" />
                 <span style="margin: 0 10px;">至</span>
                 <a-input-number v-model:value="filters.highFee" placeholder="最高票价" style="width: 140px"
-                    :min="filters.lowFee" 
-                    :max="undefined"
-                    addon-before="￥"
-                    />
+                    :min="filters.lowFee" :max="undefined" addon-before="￥" />
             </a-form-item>
 
             <a-form-item label="状态">
@@ -88,12 +88,57 @@
                 </template>
             </a-table-column>
         </a-table>
+
+        <!-- 新增演唱会 Modal -->
+        <a-modal v-model:visible="isModalVisible" title="新增演唱会" @ok="addConcert" @cancel="closeModal">
+            <a-form>
+                <a-form-item label="演唱会名称">
+                    <a-input v-model:value="newConcert.name" placeholder="请输入演唱会名称" />
+                </a-form-item>
+                <a-form-item label="演出人员">
+                    <a-input v-model:value="newConcert.player" placeholder="请输入演出人员" />
+                </a-form-item>
+                <a-form-item label="最低票价">
+                    <a-input-number v-model:value="newConcert.lowPrice" placeholder="请输入最低票价" style="width: 100%"
+                        :min="0" />
+                </a-form-item>
+                <a-form-item label="描述">
+                    <a-input v-model:value="newConcert.describe" placeholder="请输入演唱会描述" />
+                </a-form-item>
+                <a-form-item label="演唱会类型">
+                    <a-select v-model:value="newConcert.type" style="width: 100%" placeholder="请选择演唱会类型">
+                        <a-select-option value="0">演唱会</a-select-option>
+                        <a-select-option value="1">音乐会</a-select-option>
+                    </a-select>
+                </a-form-item>
+                <a-form-item label="可选座位">
+                    <a-select v-model:value="newConcert.isSelected" style="width: 100%" placeholder="请选择是否可选座位">
+                        <a-select-option value="0">可选座位</a-select-option>
+                        <a-select-option value="1">不可选</a-select-option>
+                    </a-select>
+                </a-form-item>
+                <a-form-item label="开始时间">
+                    <a-date-picker v-model:value="newConcert.beginTime" style="width: 100%" placeholder="请选择演出开始时间"
+                        show-time format="YYYY-MM-DD HH:mm:ss" />
+                </a-form-item>
+                <a-form-item label="上传图片">
+                    <a-upload :showUploadList="false" :before-upload="handleFileUpload">
+                        <a-button icon="upload">上传图片</a-button>
+                    </a-upload>
+                    <div v-if="newConcert.photo">
+                        <img :src="newConcert.photo" alt="演唱会图片"
+                            style="width: 100px; height: 100px; object-fit: cover; margin-top: 10px;" />
+                    </div>
+                </a-form-item>
+            </a-form>
+        </a-modal>
     </div>
 </template>
 
 <script>
 import { defineComponent, reactive, ref } from 'vue';
 import axios from 'axios';
+import { notification } from 'ant-design-vue';
 
 export default defineComponent({
     name: 'ConcertManagement',
@@ -109,16 +154,112 @@ export default defineComponent({
             status: undefined,
             describe: undefined,
             isSelected: undefined,
-            type: 0,
+            type: undefined,
             timeRange: []
         });
         const concerts = ref([]);
         const loading = ref(false);
         const pagination = reactive({
             current: 1,
-            pageSize: 2,
+            pageSize: 3,
             total: 0
         });
+        /***新增演唱会 */
+        const isModalVisible = ref(false);
+        const newConcert = reactive({
+            theaterId: '1',
+            name: '',
+            photo: '',
+            lowPrice: undefined,
+            location: null,
+            player: '',
+            describe: '',
+            beginTime: null,
+            type: undefined,
+            isSelected: undefined
+        });
+
+        const uploadUrl = 'users/common/upload';
+
+        // 打开新增演唱会的 Modal
+        const openAddConcertModal = () => {
+            isModalVisible.value = true;
+        };
+
+        // 关闭新增演唱会的 Modal
+        const closeModal = () => {
+            isModalVisible.value = false;
+            resetNewConcert();
+        };
+
+        // 重置新增演唱会表单
+        const resetNewConcert = () => {
+            newConcert.name = undefined;
+            newConcert.player = undefined;
+            newConcert.lowPrice = 0;
+            newConcert.photo = '';
+            newConcert.describe = undefined;
+            newConcert.beginTime = undefined;
+        };
+
+
+        // 拦截文件上传，使用 Axios 请求
+        const handleFileUpload = (file) => {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            axios.post('/users/common/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            })
+                .then(response => {
+                    if (response.data.code === 1) { // 假设 code 为 1 表示成功
+                        newConcert.photo = response.data.data; // 后端返回的图片地址
+                        notification.success('图片上传成功');
+                    } else {
+                        notification.error('图片上传失败', response.data.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    notification.error('图片上传出错');
+                });
+
+            // 返回 false 阻止默认上传行为
+            return false;
+        };
+        // 上传前验证文件类型
+        const beforeUpload = (file) => {
+            const isImage = file.type.startsWith('image/');
+            if (!isImage) {
+                alert('只能上传图片文件');
+            }
+            return isImage;
+        };
+
+        // 提交新增演唱会
+        const addConcert = async () => {
+            try {
+                const response = await axios.post('/concert/concert/save', newConcert);
+                if (response.data.code === 1) {
+                    notification.success({ message: '新增成功' });
+                    fetchConcerts();
+                    closeModal();
+                } else {
+                    notification.error({ message: '新增失败', description: response.data.msg });
+                }
+            } catch (error) {
+                notification.error({ message: '新增失败', description: error.message });
+            }
+        };
+
+        // const formatStatus = (status) => ['待审核', '待售', '售卖中', '停售', '售罄'][status] || '未知状态';
+
+        // const formatDate = (date) => date ? new Date(date).toLocaleString() : '暂无';
+
+
+        /***新增演唱会代码结束 */
 
         const fetchConcerts = async () => {
             loading.value = true;
@@ -199,7 +340,15 @@ export default defineComponent({
             resetFilters,
             onTableChange,
             formatStatus,
-            formatDate
+            formatDate,
+            isModalVisible,
+            newConcert,
+            openAddConcertModal,
+            closeModal,
+            beforeUpload,
+            addConcert,
+            uploadUrl,
+            handleFileUpload
         };
     }
 });
