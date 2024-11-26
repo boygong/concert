@@ -1,5 +1,6 @@
 package com.gong.concert.concert.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gong.concert.concert.entity.Seat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,6 +32,7 @@ public class ConcertVO {
     private String player;//演出人员
     private LocalDateTime createTime;//创建时间
     private LocalDateTime updateTime;//更新时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime beginTime;//演出开始时间
     private String createUser;//创建人
     private String updateUser;//更新人

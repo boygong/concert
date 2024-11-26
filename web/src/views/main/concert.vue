@@ -82,9 +82,8 @@
             <a-table-column title="描述" dataIndex="describe" />
             <a-table-column title="创建人" dataIndex="createUser" />
             <a-table-column title="操作">
-                <template #default="{}">
-                    <a-button type="link">查看</a-button>
-                    <a-button type="link">编辑</a-button>
+                <template #default="{ record }">
+                    <a-button type="link" @click="openEditConcert(record.concertId)">编辑</a-button>
                 </template>
             </a-table-column>
         </a-table>
@@ -133,15 +132,24 @@
             </a-form>
         </a-modal>
     </div>
+
+    <a-drawer v-model:visible="isDrawerVisible" title="编辑演唱会" :width="800" :destroy-on-close="true">
+        <EditConcert :concertId="currentConcertId" @closeDrawer="isDrawerVisible = false" />
+    </a-drawer>
+
 </template>
 
 <script>
 import { defineComponent, reactive, ref } from 'vue';
 import axios from 'axios';
 import { notification } from 'ant-design-vue';
+import EditConcert from '@/components/EditConcert.vue';
 
 export default defineComponent({
     name: 'ConcertManagement',
+    components: {
+        EditConcert
+    },
     setup() {
         const filters = reactive({
             concertId: undefined,
@@ -157,6 +165,8 @@ export default defineComponent({
             type: undefined,
             timeRange: []
         });
+        const currentConcertId = ref(null);
+        const isDrawerVisible = ref(false);
         const concerts = ref([]);
         const loading = ref(false);
         const pagination = reactive({
@@ -190,6 +200,12 @@ export default defineComponent({
         const closeModal = () => {
             isModalVisible.value = false;
             resetNewConcert();
+        };
+
+
+        const openEditConcert = (concertId) => {
+            currentConcertId.value = concertId; // 设置当前编辑的演唱会 ID
+            isDrawerVisible.value = true; // 显示右侧抽屉
         };
 
         // 重置新增演唱会表单
@@ -348,7 +364,10 @@ export default defineComponent({
             beforeUpload,
             addConcert,
             uploadUrl,
-            handleFileUpload
+            handleFileUpload,
+            openEditConcert,
+            currentConcertId,
+            isDrawerVisible,
         };
     }
 });
