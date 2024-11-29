@@ -11,6 +11,7 @@
         <module>users</module>
         <module>feign-api</module>
         <module>concert</module>
+        <module>order</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
