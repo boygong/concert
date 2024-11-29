@@ -21,7 +21,11 @@ public enum BusinessExceptionEnum {
     Not_MODIFY_YOURSELF("不能修改自己"),
     USERNAME_IS_NULL("用户名为空"),
     UPDATE_SEAT_FAIL("更新座位失败"),
-    UPDATE_CONCERT_FAIL("更新演唱会信息失败");
+    UPDATE_CONCERT_FAIL("更新演唱会信息失败"),
+    USERID_IS_NULL("用户id为空"),
+    CONCERTID_IS_NULL("演唱会id为空"),
+    SEATNUM_IS_NULL("座位数为空"),
+    SEATNUM_IS_ERROR("座位数不匹配");
 //    MEMBER_MOBILE_EXIST("手机号已注册"),
 //    MEMBER_MOBILE_NOT_EXIST("请先获取短信验证码"),
 //    MEMBER_MOBILE_CODE_ERROR("短信验证码错误");
