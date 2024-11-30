@@ -22,4 +22,7 @@ public interface SeatMapper {
 
     @Select("select * from seats where seat_id = #{seatId}")
     Seat getBySeatId(String seatId);
+
+    @Select("select * from seats where concert_id=#{concertId} and seat_status = 0 limit 0,#{num}")
+    List<Seat> getByNum(String concertId,Integer num);
 }

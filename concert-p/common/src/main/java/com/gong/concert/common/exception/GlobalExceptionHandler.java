@@ -64,6 +64,21 @@ public class GlobalExceptionHandler {
         return result;
     }
 
+    @ExceptionHandler(value = RuntimeException.class)
+    @ResponseBody
+    public Result exceptionHandler(RuntimeException e){
+        // LOG.info("seata全局事务ID: {}", RootContext.getXID());
+        // // 如果是在一次全局事务里出异常了，就不要包装返回值，将异常抛给调用方，让调用方回滚事务
+        // if (StrUtil.isNotBlank(RootContext.getXID())) {
+        //     throw e;
+        // }
+        Result result = new Result();
+        log.error("系统异常：", e.getMessage());
+        result.setCode(555);
+        result.setMsg(e.getMessage());
+        return result;
+    }
+
 //    @ExceptionHandler(value = SQLException.class)
 //    @ResponseBody
 //    public Result exceptionHandler(SQLException e) {

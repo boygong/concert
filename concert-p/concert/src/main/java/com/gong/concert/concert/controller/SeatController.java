@@ -3,10 +3,9 @@ package com.gong.concert.concert.controller;
 import com.gong.concert.concert.entity.Seat;
 import com.gong.concert.concert.service.SeatService;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Author ToastFish
@@ -21,5 +20,15 @@ public class SeatController {
     public Seat getById(@RequestParam String seatId){
         Seat seat = seatService.getById(seatId);
         return seat;
+    }
+
+    @GetMapping("/getBuNum")
+    public List<Seat> getByNum(@RequestParam String concertId ,@RequestParam Integer num){
+        return seatService.getByNum(concertId,num);
+    }
+
+    @PutMapping("/updateStatus")
+    boolean updateStatus(Seat seat, Short status){
+        return seatService.updateStatus(seat,status);
     }
 }
