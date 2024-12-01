@@ -95,7 +95,7 @@ public class OrderServiceImpl implements OrderService {
             if (flag==false){
                 throw new OrderException("更新座位信息失败");
             }
-            int x = 1/0;
+           // int x = 1/0; 测试分布式事务回滚
             allAmount += seat.getFee();
         }
         /**新增订单信息**/
