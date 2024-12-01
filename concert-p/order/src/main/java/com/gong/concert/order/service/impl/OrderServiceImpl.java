@@ -14,6 +14,7 @@ import com.gong.concert.order.entity.OrderDetail;
 import com.gong.concert.order.mapper.OrderDetailMapper;
 import com.gong.concert.order.mapper.OrderMapper;
 import com.gong.concert.order.service.OrderService;
+import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
     @Resource
     private OrderDetailMapper orderDetailMapper;
     @Override
-    @Transactional(rollbackFor = Exception.class) // 确保事务回滚
+    @GlobalTransactional
     public boolean createOrder(CreateOrderDTO dto) {
         log.info("进入创建订单createConfirm的Service层:{}",dto);
         String userId = dto.getUserId();
@@ -94,6 +95,7 @@ public class OrderServiceImpl implements OrderService {
             if (flag==false){
                 throw new OrderException("更新座位信息失败");
             }
+            int x = 1/0;
             allAmount += seat.getFee();
         }
         /**新增订单信息**/
