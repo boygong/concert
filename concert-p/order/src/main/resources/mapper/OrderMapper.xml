@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gong.concert.order.mapper.OrderMapper">
+
+    <insert id="insert">
+        insert into orders(order_id, user_id, address_book_id, pay_status, pay_method, amount, remark, phone, address,
+                           user_name, consignee, begin_time,create_time,order_status)
+        VALUES (#{orderId},#{userId},#{addressBookId},#{payStatus},#{payMethod},#{amount},#{remark},#{phone}
+               ,#{address},#{userName},#{consignee},#{beginTime},#{createTime},#{orderStatus})
+    </insert>
+</mapper>

@@ -3,12 +3,15 @@ package com.gong.concert.order.service.impl;
 
 import com.gong.concert.common.exception.BusinessException;
 import com.gong.concert.common.exception.BusinessExceptionEnum;
+import com.gong.concert.common.exception.OrderException;
 import com.gong.concert.common.util.SnowUtil;
 import com.gong.concert.feign.clients.SeatClient;
 import com.gong.concert.feign.pojo.Seat;
 import com.gong.concert.order.dto.CreateOrderDTO;
 
 import com.gong.concert.order.entity.Order;
+import com.gong.concert.order.entity.OrderDetail;
+import com.gong.concert.order.mapper.OrderDetailMapper;
 import com.gong.concert.order.mapper.OrderMapper;
 import com.gong.concert.order.service.OrderService;
 import jakarta.annotation.Resource;
@@ -32,6 +35,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderMapper orderMapper;
     @Resource
     private SeatClient seatClient;
+    @Resource
+    private OrderDetailMapper orderDetailMapper;
     @Override
     @Transactional(rollbackFor = Exception.class) // 确保事务回滚
     public boolean createOrder(CreateOrderDTO dto) {
@@ -77,16 +82,17 @@ public class OrderServiceImpl implements OrderService {
         }
         else  if (isSelected == 1){ //不可选座位
             seatList = seatClient.getByNum(concertId,seatNum);
-            if (seatList.size() != seatNum ||seatList.size()==0){
-                throw new RuntimeException("座位余票不足，座位只剩"+seatList.size()+",实际购买"+seatNum);
-            }
+
+        }
+        if (seatList.size() != seatNum ||seatList.size()==0){
+            throw new OrderException("座位余票不足，座位只剩"+seatList.size()+",实际购买"+seatNum);
         }
         double allAmount = 0;//支付总金额
         /**更新座位信息*/
         for (Seat seat : seatList) {
             boolean flag = seatClient.updateStatus(seat,(short)5); //设置座位状态为待支付
             if (flag==false){
-                throw new RuntimeException("更新座位信息失败");
+                throw new OrderException("更新座位信息失败");
             }
             allAmount += seat.getFee();
         }
@@ -105,13 +111,28 @@ public class OrderServiceImpl implements OrderService {
         orderDb.setConsignee(null); //需要新增地址簿各功能
         orderDb.setCreateTime(LocalDateTime.now());
         orderDb.setOrderStatus((short) 0); //设置待确认状态
+        orderDb.setBeginTime(null); //需要新增模块之间查询演唱会功能
         /*封装订单信息end*/
         int i = orderMapper.insert(orderDb);
         if (i==0){
-            throw new RuntimeException("创建订单异常");
+            throw new OrderException("创建订单异常");
         }
         /**新增订单明细信息**/
-
+        for (Seat seat : seatList) {
+            OrderDetail detail = new OrderDetail();
+            detail.setOrderDetailId(SnowUtil.getSnowflakeNextIdStr());
+            detail.setName("等待成功");
+            detail.setCol(seat.getSeatCol());
+            detail.setRow(seat.getSeatRow());
+            detail.setAmount(seat.getFee());
+            detail.setOrderId(orderDb.getOrderId());
+            detail.setSeatId(seat.getSeatId());
+            log.info("订单详细信息：{}",detail);
+            int j = orderDetailMapper.insert(detail);
+            if (j == 0){
+                throw new OrderException("新增订单明细失败");
+            }
+        }
         /**封装返回订单结果**/
         return false;
     }

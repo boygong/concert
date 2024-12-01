@@ -64,18 +64,18 @@ public class GlobalExceptionHandler {
         return result;
     }
 
-    @ExceptionHandler(value = RuntimeException.class)
+    @ExceptionHandler(value = OrderException.class)
     @ResponseBody
-    public Result exceptionHandler(RuntimeException e){
+    public Result exceptionHandler(OrderException e){
         // LOG.info("seata全局事务ID: {}", RootContext.getXID());
         // // 如果是在一次全局事务里出异常了，就不要包装返回值，将异常抛给调用方，让调用方回滚事务
         // if (StrUtil.isNotBlank(RootContext.getXID())) {
         //     throw e;
         // }
         Result result = new Result();
-        log.error("系统异常：", e.getMessage());
+        log.error("订单业务异常：", e.getDes());
         result.setCode(555);
-        result.setMsg(e.getMessage());
+        result.setMsg(e.getDes());
         return result;
     }
 

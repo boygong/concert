@@ -4,6 +4,7 @@ import com.gong.concert.feign.pojo.Seat;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -21,5 +22,5 @@ public interface SeatClient {
     List<Seat> getByNum(@RequestParam String concertId ,@RequestParam Integer seatNum);
 
     @PutMapping("/updateStatus")
-    boolean updateStatus(Seat seat, Short status);
+    boolean updateStatus(@RequestBody Seat seat,@RequestParam Short status);
 }

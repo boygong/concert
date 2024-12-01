@@ -22,13 +22,13 @@ public class SeatController {
         return seat;
     }
 
-    @GetMapping("/getBuNum")
-    public List<Seat> getByNum(@RequestParam String concertId ,@RequestParam Integer num){
-        return seatService.getByNum(concertId,num);
+    @GetMapping("/getByNum")
+    public List<Seat> getByNum(@RequestParam String concertId ,@RequestParam Integer seatNum){
+        return seatService.getByNum(concertId,seatNum);
     }
 
     @PutMapping("/updateStatus")
-    boolean updateStatus(Seat seat, Short status){
+    boolean updateStatus(@RequestBody Seat seat, @RequestParam  Short status){
         return seatService.updateStatus(seat,status);
     }
 }
