@@ -4,6 +4,7 @@ package com.gong.concert.order.service.impl;
 import com.gong.concert.common.exception.BusinessException;
 import com.gong.concert.common.exception.BusinessExceptionEnum;
 import com.gong.concert.common.exception.OrderException;
+import com.gong.concert.common.util.RedisLockUtil;
 import com.gong.concert.common.util.SnowUtil;
 import com.gong.concert.feign.clients.SeatClient;
 import com.gong.concert.feign.pojo.Seat;
@@ -17,6 +18,8 @@ import com.gong.concert.order.service.OrderService;
 import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +41,11 @@ public class OrderServiceImpl implements OrderService {
     private SeatClient seatClient;
     @Resource
     private OrderDetailMapper orderDetailMapper;
+
+    @Autowired
+    private RedisLockUtil redisLockUtil;
+
+
     @Override
     @GlobalTransactional
     public boolean createOrder(CreateOrderDTO dto) {
@@ -91,6 +99,12 @@ public class OrderServiceImpl implements OrderService {
         double allAmount = 0;//支付总金额
         /**更新座位信息*/
         for (Seat seat : seatList) {
+            // 加锁操作：每次获取座位锁
+            boolean lockAcquired = redisLockUtil.lock("seat_lock_" + seat.getSeatId(), 30, 10, 2); // 锁超时时间30秒，最大等待10秒，重试间隔2秒
+            log.info("执行Redis加锁操作");
+            if (!lockAcquired) {
+                throw new OrderException("座位 " + seat.getSeatId() + " 正在处理中，请稍后再试");
+            }
             boolean flag = seatClient.updateStatus(seat,(short)5); //设置座位状态为待支付
             if (flag==false){
                 throw new OrderException("更新座位信息失败");
@@ -106,7 +120,7 @@ public class OrderServiceImpl implements OrderService {
         orderDb.setAddressBookId(orderDb.getAddressBookId());
         orderDb.setPayStatus((short)0);
         orderDb.setAmount(allAmount);
-        orderDb.setRemark(null);////需要查演唱会数据
+        orderDb.setRemark(dto.getRemark());////需要查演唱会数据
         orderDb.setPhone(null); ////需要查用户信息
         orderDb.setAddress(null); ////需要新增地址簿各功能
         orderDb.setUserName("头号玩家"); //先写死
@@ -141,13 +155,13 @@ public class OrderServiceImpl implements OrderService {
 
     private static void checkSeatStatus(Short seatStatus, Integer row, Integer col) {
         if (seatStatus ==1){
-            throw new RuntimeException( row + "行"+ col +"列" +"的座位已被停用");
+            throw new OrderException( row + "行"+ col +"列" +"的座位已被停用");
         }else if (seatStatus ==2){
-            throw new RuntimeException( row + "行"+ col +"列" + "座位正在被维修");
+            throw new OrderException( row + "行"+ col +"列" + "座位正在被维修");
         }else if (seatStatus ==3){
-            throw new RuntimeException( row + "行"+ col +"列" + "座位已经停用");
+            throw new OrderException( row + "行"+ col +"列" + "座位已经停用");
         }else if (seatStatus ==6 || seatStatus ==5){
-            throw new RuntimeException( row + "行"+ col +"列" + "座位已经被售出");
+            throw new OrderException( row + "行"+ col +"列" + "座位已经被售出");
         }
     }
 }

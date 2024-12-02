@@ -1,3 +1,4 @@
+import com.gong.concert.common.util.RedisLockUtil;
 import com.gong.concert.concert.ConcertApplication;
 import com.gong.concert.concert.entity.Seat;
 import com.gong.concert.concert.mapper.ConcertMapper;
@@ -22,6 +23,8 @@ public class testRedis {
     private RedisTemplate<String,String> redisTemplate;
     @Autowired
     private SeatMapper seatMapper;
+    @Autowired
+    private RedisLockUtil redisLockUtil;
 
 
     @Test
@@ -29,6 +32,13 @@ public class testRedis {
         redisTemplate.opsForValue().set("test", "Hello Redis!");
         String value = redisTemplate.opsForValue().get("test");
         System.out.println(value);  // 应该输出 "Hello Redis!"
+    }
+
+    @Test
+    public void testTemplate(){
+        // 加锁操作：每次获取座位锁
+        boolean lockAcquired = redisLockUtil.lock("seat_lock_" + "1223", 30, 10, 2); // 锁超时时间30秒，最大等待10秒，重试间隔2秒
+        System.out.println(lockAcquired);
     }
 
     @Test
