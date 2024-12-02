@@ -11,3 +11,13 @@ open-feign:
   seat:
     api-url: http://127.0.0.1:28003
 
+spring:
+  data:
+    redis:
+      host: 127.0.0.1
+      password: 123456
+      timeout: 5000
+      database: 0
+      port: 15112
+
+
