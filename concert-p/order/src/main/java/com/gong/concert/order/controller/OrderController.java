@@ -1,6 +1,7 @@
 package com.gong.concert.order.controller;
 
 import com.gong.concert.common.resp.Result;
+import com.gong.concert.order.dto.ConfirmOrderDTO;
 import com.gong.concert.order.dto.CreateOrderDTO;
 
 import com.gong.concert.order.service.OrderService;
@@ -37,8 +38,8 @@ public class OrderController {
      * @return: com.gong.concert.common.resp.Result
     */
     @PutMapping("/confirmOrder")
-    public Result confirmOrder(@RequestParam String orderId){
-
-        return Result.success();
+    public Result confirmOrder(@RequestBody ConfirmOrderDTO dto){
+        String confirm = orderService.confirm(dto);
+        return Result.success(confirm);
     }
 }

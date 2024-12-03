@@ -10,6 +10,7 @@ import com.gong.concert.feign.clients.ConcertClient;
 import com.gong.concert.feign.clients.SeatClient;
 import com.gong.concert.feign.pojo.Concert;
 import com.gong.concert.feign.pojo.Seat;
+import com.gong.concert.order.dto.ConfirmOrderDTO;
 import com.gong.concert.order.dto.CreateOrderDTO;
 
 import com.gong.concert.order.entity.Order;
@@ -60,8 +61,6 @@ public class OrderServiceImpl implements OrderService {
         Short isSelected = dto.getIsSelected();
         List<String> seatIdList = dto.getSeatIdList();
         Integer seatNum = dto.getSeatNum();
-        String addressBookId = dto.getAddressBookId();
-        String remark = dto.getRemark();
         double allAmount = 0;//支付总金额
 
         if (userId ==null || userId.equals("")){
@@ -169,6 +168,47 @@ public class OrderServiceImpl implements OrderService {
         vo.setCreateTime(LocalDateTime.now());
         vo.setImage(concert.getPhoto());
         return vo;
+    }
+
+    @Override
+    public String confirm(ConfirmOrderDTO dto) {
+        log.info("确认订单进入Service层:{}",dto);
+        String orderId = dto.getOrderId();
+        Short payMethod = dto.getPayMethod();
+        Double amount = dto.getAmount();
+        if (orderId==null ||orderId==""){
+            throw new OrderException("确认订单orderId为空");
+        }
+        if (payMethod==null){
+            throw new OrderException("支付方式为空");
+        }
+        if (payMethod<(short) 0 ){
+            throw new OrderException("支付方式不合法");
+        }
+        if (amount<0){
+            throw new OrderException("支付金额非法");
+        }
+        //查询出订单信息
+        Order order = orderMapper.selectById(orderId);
+        if (order==null){
+            throw new OrderException("未检索到订单信息");
+        }
+        if (Math.abs(order.getAmount()-amount)>0.000001){
+            throw new OrderException("支付金额验证不通过");
+        }
+        if (order.getOrderStatus()==(short) 1){
+            throw new OrderException("该订单已确认");
+        }
+        /**对订单信息进行修改*/
+        Order orderDb = new Order();
+        orderDb.setOrderId(orderId);
+        orderDb.setOrderStatus((short) 1);//已确认
+        orderDb.setPayMethod(payMethod); //设置支付方式
+        int i = orderMapper.update(orderDb);
+        if (i != 1){
+            throw new OrderException("确认订单失败");
+        }
+        return orderId;
     }
 
     private static void checkSeatStatus(Short seatStatus, Integer row, Integer col) {

@@ -31,6 +31,7 @@ public class RedisLockUtil {
             Boolean lockAcquired = redisTemplate.opsForValue().setIfAbsent(lockKey, "LOCK", timeout, TimeUnit.SECONDS);
 
             if (lockAcquired != null && lockAcquired) {
+                log.info("加锁成功");
                 return true;  // 获取锁成功
             }
 
@@ -42,6 +43,7 @@ public class RedisLockUtil {
                 Thread.currentThread().interrupt();
             }
         }
+        log.info("加锁失败");
         return false;  // 超过最大等待时间仍未获取到锁
     }
 

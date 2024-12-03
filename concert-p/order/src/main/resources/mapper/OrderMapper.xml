@@ -9,4 +9,28 @@
         VALUES (#{orderId},#{userId},#{addressBookId},#{payStatus},#{payMethod},#{amount},#{remark},#{phone}
                ,#{address},#{userName},#{consignee},#{beginTime},#{createTime},#{orderStatus})
     </insert>
+
+    <update id="update" parameterType="com.gong.concert.order.entity.Order">
+        UPDATE orders
+        <set>
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="addressBookId != null and addressBookId != ''">address_book_id = #{addressBookId},</if>
+            <if test="payStatus != null">pay_status = #{payStatus},</if>
+            <if test="payMethod != null">pay_method = #{payMethod},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="consignee != null and consignee != ''">consignee = #{consignee},</if>
+            <if test="cancelReason != null and cancelReason != ''">cancel_reason = #{cancelReason},</if>
+            <if test="rejectionReason != null and rejectionReason != ''">rejection_reason = #{rejectionReason},</if>
+            <if test="cancelTime != null">cancel_time = #{cancelTime},</if>
+            <if test="beginTime != null">begin_time = #{beginTime},</if>
+            <if test="orderStatus != null">order_status = #{orderStatus},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        WHERE order_id = #{orderId}
+    </update>
 </mapper>
