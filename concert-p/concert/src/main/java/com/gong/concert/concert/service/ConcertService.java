@@ -15,6 +15,7 @@ public interface ConcertService {
     void saveConcert(SaveConcertDTO dto);
 
     PageResult pageQuery(QueryConcertByPageDTO dto);
+    PageResult pageQueryUser(QueryConcertByPageDTO dto);
 
     ConcertVO getById(String concertId);
 
@@ -25,4 +26,6 @@ public interface ConcertService {
     Concert getByIdFeign(String concertId);
 
     int updateStatus(String concertId, Short status);
+
+
 }

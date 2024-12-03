@@ -25,4 +25,10 @@ public interface SeatMapper {
 
     @Select("select * from seats where concert_id=#{concertId} and seat_status = 0 limit 0,#{num}")
     List<Seat> getByNum(String concertId,Integer num);
+
+    @Select("select count(*) from seats where concert_id =#{concertId} and seat_status = #{status}")
+    int selectCountByStatus(String concertId, short status);
+
+    @Select("select count(*) from seats where concert_id =#{concertId}")
+    int selectCount(String concertId);
 }

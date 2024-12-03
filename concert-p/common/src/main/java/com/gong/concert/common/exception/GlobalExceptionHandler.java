@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public Result exceptionHandler(BusinessException e) {
         Result result = new Result();
-        log.error("业务异常：{}", e.getE().getDesc());
+        log.error("业务异常:", e.getE().getDesc());
         result.setCode(999);
         result.setMsg(e.getE().getDesc());
         return result;
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public Result exceptionHandler(BindException e) {
         Result result = new Result();
-        log.error("校验异常：{}", e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        log.error("校验异常:", e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
         result.setCode(0);
         result.setMsg(e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
         return result;
@@ -73,7 +73,7 @@ public class GlobalExceptionHandler {
         //     throw e;
         // }
         Result result = new Result();
-        log.error("订单业务异常：", e.getDes());
+        log.error("订单业务异常:", e.getDes());
         result.setCode(555);
         result.setMsg(e.getDes());
         return result;

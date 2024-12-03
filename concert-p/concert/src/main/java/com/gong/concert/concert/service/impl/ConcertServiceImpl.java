@@ -18,6 +18,7 @@ import com.gong.concert.concert.mapper.ConcertMapper;
 import com.gong.concert.concert.mapper.SeatMapper;
 import com.gong.concert.concert.mapper.TheaterMapper;
 import com.gong.concert.concert.service.ConcertService;
+import com.gong.concert.concert.vo.ConcertForUser;
 import com.gong.concert.concert.vo.ConcertVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -88,6 +90,27 @@ public class ConcertServiceImpl implements ConcertService {
         PageHelper.startPage(dto.getPage(), dto.getSize());
         Page<Concert> page = concertMapper.pageQuery(dto);
         PageResult pageResult = new PageResult(page.getTotal(), page.getResult());
+        return pageResult;
+    }
+
+    @Override
+    public PageResult pageQueryUser(QueryConcertByPageDTO dto) {
+        log.info("用户演唱会分页查询进入Service层:{},{},{}",dto.getPage(),dto.getSize(),dto);
+        //开始分页查询
+        PageHelper.startPage(dto.getPage(), dto.getSize());
+        Page<Concert> page = concertMapper.pageQuery(dto);
+        List<Concert> concertList = page.getResult();
+        List<ConcertForUser> vo = new ArrayList<>();
+        for (Concert concert : concertList) {
+            ConcertForUser forUser = new ConcertForUser();
+            BeanUtil.copyProperties(concert,forUser);
+            int seatNum = seatMapper.selectCount(concert.getConcertId());
+            int currentNum = seatMapper.selectCountByStatus(concert.getConcertId(),(short) 0);
+            forUser.setSeatNum(seatNum);
+            forUser.setCurrentNum(currentNum);
+            vo.add(forUser);
+        }
+        PageResult pageResult = new PageResult(page.getTotal(), vo);
         return pageResult;
     }
 

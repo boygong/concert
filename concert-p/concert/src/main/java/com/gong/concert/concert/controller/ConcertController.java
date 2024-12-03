@@ -40,7 +40,7 @@ public class ConcertController {
         }
     }
     /**
-     * @description: 分页查询演唱会信息
+     * @description: 分页查询演唱会信息(管理员)
      * @author: gongyuankang
      * @date: 2024/11/13 17:23
      * @return: com.gong.concert.common.resp.Result
@@ -48,6 +48,12 @@ public class ConcertController {
     @PostMapping("/pageQuery")
     public Result pageQuery(@RequestBody QueryConcertByPageDTO dto){
         PageResult pageResult = concertService.pageQuery(dto);
+        return Result.success(pageResult);
+    }
+
+    @PostMapping("/pageQueryUser")
+    public Result pageQueryUser(@RequestBody QueryConcertByPageDTO dto){
+        PageResult pageResult = concertService.pageQueryUser(dto);
         return Result.success(pageResult);
     }
 
