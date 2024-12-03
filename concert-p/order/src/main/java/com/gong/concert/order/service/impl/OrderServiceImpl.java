@@ -17,11 +17,11 @@ import com.gong.concert.order.entity.OrderDetail;
 import com.gong.concert.order.mapper.OrderDetailMapper;
 import com.gong.concert.order.mapper.OrderMapper;
 import com.gong.concert.order.service.OrderService;
+import com.gong.concert.order.vo.CreateOrderVO;
 import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @GlobalTransactional
-    public boolean createOrder(CreateOrderDTO dto) {
+    public CreateOrderVO createOrder(CreateOrderDTO dto) {
         log.info("进入创建订单createConfirm的Service层:{}",dto);
         String userId = dto.getUserId();
         String concertId = dto.getConcertId();
@@ -100,7 +100,7 @@ public class OrderServiceImpl implements OrderService {
 
         }
         if (seatList.size() != seatNum ||seatList.size()==0){
-            //TODO 更新演唱会状态为售罄
+            //更新演唱会状态为售罄
             concertClient.updateStatus(concertId,(short) 3);
             throw new OrderException("座位余票不足，座位只剩"+seatList.size()+",实际购买"+seatNum);
         }
@@ -141,6 +141,7 @@ public class OrderServiceImpl implements OrderService {
             throw new OrderException("创建订单异常");
         }
         /**新增订单明细信息**/
+        List<OrderDetail> detailList = new ArrayList<>();
         for (Seat seat : seatList) {
             OrderDetail detail = new OrderDetail();
             detail.setOrderDetailId(SnowUtil.getSnowflakeNextIdStr());
@@ -151,13 +152,23 @@ public class OrderServiceImpl implements OrderService {
             detail.setOrderId(orderDb.getOrderId());
             detail.setSeatId(seat.getSeatId());
             log.info("订单详细信息：{}",detail);
+            detailList.add(detail);
             int j = orderDetailMapper.insert(detail);
             if (j == 0){
                 throw new OrderException("新增订单明细失败");
             }
         }
         /**封装返回订单结果**/
-        return false;
+        CreateOrderVO vo = new CreateOrderVO();
+        vo.setOrderId(orderDb.getOrderId());
+        vo.setUserName("头号玩家");
+        vo.setConcertName(concert.getName());
+        vo.setAmount(allAmount);
+        vo.setBeginTime(concert.getBeginTime());
+        vo.setOrderDetails(detailList);
+        vo.setCreateTime(LocalDateTime.now());
+        vo.setImage(concert.getPhoto());
+        return vo;
     }
 
     private static void checkSeatStatus(Short seatStatus, Integer row, Integer col) {
