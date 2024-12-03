@@ -162,6 +162,21 @@ public class ConcertServiceImpl implements ConcertService {
         return flag;
     }
 
+    @Override
+    public Concert getByIdFeign(String concertId) {
+        log.info("演唱会查单个进入Feign - Service层:{}",concertId);
+        QueryConcertByPageDTO dto = new QueryConcertByPageDTO();//省力只想写一个sql了
+        dto.setConcertId(concertId);
+        Page<Concert> concerts = concertMapper.pageQuery(dto);//查出演唱会信息
+        Concert concert = concerts.get(0);
+        return concert;
+    }
+
+    @Override
+    public int updateStatus(String concertId, Short status) {
+        return concertMapper.updateStatus(concertId,status);
+    }
+
     private void generateSeats(Theater theater, String concertId) {
         for (int row = 1; row <= theater.getRow(); row++) {
             for (int col = 1; col <= theater.getCol(); col++) {

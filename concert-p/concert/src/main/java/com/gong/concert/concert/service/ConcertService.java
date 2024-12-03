@@ -3,6 +3,7 @@ package com.gong.concert.concert.service;
 import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.concert.dto.QueryConcertByPageDTO;
 import com.gong.concert.concert.dto.SaveConcertDTO;
+import com.gong.concert.concert.entity.Concert;
 import com.gong.concert.concert.vo.ConcertVO;
 
 /**
@@ -20,4 +21,8 @@ public interface ConcertService {
     int stopSale(String concertId);
 
     int startSale(String concertId);
+
+    Concert getByIdFeign(String concertId);
+
+    int updateStatus(String concertId, Short status);
 }

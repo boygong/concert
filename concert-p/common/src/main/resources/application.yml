@@ -10,6 +10,8 @@ open-feign:
     api-url: http://127.0.0.1:28001
   seat:
     api-url: http://127.0.0.1:28003
+  concert:
+    api-url: http://127.0.0.1:28003
 
 spring:
   data:

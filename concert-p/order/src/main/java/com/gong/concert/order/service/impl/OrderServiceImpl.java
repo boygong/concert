@@ -6,7 +6,9 @@ import com.gong.concert.common.exception.BusinessExceptionEnum;
 import com.gong.concert.common.exception.OrderException;
 import com.gong.concert.common.util.RedisLockUtil;
 import com.gong.concert.common.util.SnowUtil;
+import com.gong.concert.feign.clients.ConcertClient;
 import com.gong.concert.feign.clients.SeatClient;
+import com.gong.concert.feign.pojo.Concert;
 import com.gong.concert.feign.pojo.Seat;
 import com.gong.concert.order.dto.CreateOrderDTO;
 
@@ -45,6 +47,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private RedisLockUtil redisLockUtil;
 
+    @Autowired
+    private ConcertClient concertClient;
+
 
     @Override
     @GlobalTransactional
@@ -57,6 +62,7 @@ public class OrderServiceImpl implements OrderService {
         Integer seatNum = dto.getSeatNum();
         String addressBookId = dto.getAddressBookId();
         String remark = dto.getRemark();
+        double allAmount = 0;//支付总金额
 
         if (userId ==null || userId.equals("")){
             throw new BusinessException(BusinessExceptionEnum.USERID_IS_NULL);
@@ -64,7 +70,13 @@ public class OrderServiceImpl implements OrderService {
         if (concertId==null || concertId==""){
             throw new BusinessException(BusinessExceptionEnum.CONCERTID_IS_NULL);
         }
+        Concert concert = concertClient.getByIdFeign(concertId);
+        log.info("调用feign获取到的演唱会信息:{}",concert);
+        if (concert.getStatus()!=(short)1){
+            throw new OrderException("演唱会状态异常无法预约");
+        }
         List<Seat> seatList = new ArrayList<>();
+
         if (isSelected == 0){  //可选座位
             if (seatIdList.size()==0||seatIdList==null||seatNum==0){ //座位数为空
                 throw new BusinessException(BusinessExceptionEnum.SEATNUM_IS_NULL);
@@ -81,12 +93,6 @@ public class OrderServiceImpl implements OrderService {
                 Integer col = seat.getSeatCol();
                 checkSeatStatus(seatStatus, row, col);
                 seatList.add(seat);
-                String SeatLockStr = seat.getSeatId(); //创建座位锁字符串(暂时用座位id)
-                //TODO 向Redis中存入锁字符串
-                boolean flag = true; /**存入Redis是否成功，目前默认成功*/
-                if(!flag){
-                    return false;
-                }
             }
         }
         else  if (isSelected == 1){ //不可选座位
@@ -94,9 +100,10 @@ public class OrderServiceImpl implements OrderService {
 
         }
         if (seatList.size() != seatNum ||seatList.size()==0){
+            //TODO 更新演唱会状态为售罄
+            concertClient.updateStatus(concertId,(short) 3);
             throw new OrderException("座位余票不足，座位只剩"+seatList.size()+",实际购买"+seatNum);
         }
-        double allAmount = 0;//支付总金额
         /**更新座位信息*/
         for (Seat seat : seatList) {
             // 加锁操作：每次获取座位锁
@@ -109,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
             if (flag==false){
                 throw new OrderException("更新座位信息失败");
             }
-           // int x = 1/0; 测试分布式事务回滚
+           // int x = 1/0; //测试分布式事务回滚
             allAmount += seat.getFee();
         }
         /**新增订单信息**/
@@ -117,17 +124,17 @@ public class OrderServiceImpl implements OrderService {
         /*封装订单信息start*/
         orderDb.setOrderId(SnowUtil.getSnowflakeNextIdStr());
         orderDb.setUserId(String.valueOf((short)1)); //先写死
-        orderDb.setAddressBookId(orderDb.getAddressBookId());
+        orderDb.setAddressBookId(null);
         orderDb.setPayStatus((short)0);
         orderDb.setAmount(allAmount);
         orderDb.setRemark(dto.getRemark());////需要查演唱会数据
-        orderDb.setPhone(null); ////需要查用户信息
+        orderDb.setPhone("15342907459"); ////需要登录之后在线程中获取，先写死
         orderDb.setAddress(null); ////需要新增地址簿各功能
-        orderDb.setUserName("头号玩家"); //先写死
+        orderDb.setUserName("头号玩家"); //需要登录之后在线程中获取，先写死
         orderDb.setConsignee(null); //需要新增地址簿各功能
         orderDb.setCreateTime(LocalDateTime.now());
         orderDb.setOrderStatus((short) 0); //设置待确认状态
-        orderDb.setBeginTime(null); //需要新增模块之间查询演唱会功能
+        orderDb.setBeginTime(concert.getBeginTime()); //需要新增模块之间查询演唱会功能
         /*封装订单信息end*/
         int i = orderMapper.insert(orderDb);
         if (i==0){
