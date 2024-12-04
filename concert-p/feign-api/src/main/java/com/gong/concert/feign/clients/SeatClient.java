@@ -23,4 +23,7 @@ public interface SeatClient {
 
     @PutMapping("/updateStatus")
     boolean updateStatus(@RequestBody Seat seat,@RequestParam Short status);
+
+    @PutMapping("/updateStatusBySeatId")
+    int updateStatusBySeatId(@RequestParam String seatId,@RequestParam Short status);
 }

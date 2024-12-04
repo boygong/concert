@@ -2,6 +2,7 @@ package com.gong.concert.order.controller;
 
 import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.resp.Result;
+import com.gong.concert.order.dto.CancelOrderDTO;
 import com.gong.concert.order.dto.ConfirmOrderDTO;
 import com.gong.concert.order.dto.CreateOrderDTO;
 
@@ -45,10 +46,27 @@ public class OrderController {
         return Result.success(confirm);
     }
 
+    /**
+     * @description: 分页查询接口
+     * @author: gongyuankang
+     * @date: 2024/12/4 22:02
+     * @return: com.gong.concert.common.resp.Result
+    */
     @PostMapping("/pageQuery")
     public Result pageQuery(@RequestBody OrderPageQueryDTO dto){
-        PageResult pageResult = new PageResult();
-        pageResult = orderService.pageQuery(dto);
+        PageResult pageResult = orderService.pageQuery(dto);
         return Result.success(pageResult);
+    }
+
+    /**
+     * @description:取消订单接口
+     * @author: gongyuankang
+     * @date: 2024/12/4 22:02
+     * @return: com.gong.concert.common.resp.Result
+    */
+    @PostMapping("/cancelOrder")
+    public Result cancelOrder(@RequestBody CancelOrderDTO dto){
+        orderService.cancelOrder(dto);
+        return Result.success();
     }
 }

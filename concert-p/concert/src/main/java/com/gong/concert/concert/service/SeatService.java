@@ -14,4 +14,6 @@ public interface SeatService {
     List<Seat> getByNum(String concertId,Integer num);
 
     boolean updateStatus(Seat seat, Short status);
+
+    int updateStatusBySeatId(String seatId,Short status);
 }

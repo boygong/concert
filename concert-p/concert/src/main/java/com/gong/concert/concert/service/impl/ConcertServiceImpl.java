@@ -151,7 +151,7 @@ public class ConcertServiceImpl implements ConcertService {
                 continue; //跳过这个座位
             }
             seat.setSeatStatus((short) 3); //停售
-            int j = seatMapper.updateStatus(seat.getConcertId(),seat.getSeatId(),seat.getSeatStatus());
+            int j = seatMapper.updateStatus(seat.getSeatId(),seat.getSeatStatus());
             if (j == 0){
                 throw new BusinessException(BusinessExceptionEnum.UPDATE_SEAT_FAIL);
             }
@@ -176,7 +176,7 @@ public class ConcertServiceImpl implements ConcertService {
                 continue; //跳过这个座位
             }
             seat.setSeatStatus((short)0); //启售
-            int j = seatMapper.updateStatus(seat.getConcertId(),seat.getSeatId(),seat.getSeatStatus());
+            int j = seatMapper.updateStatus(seat.getSeatId(),seat.getSeatStatus());
             if (j == 0){
                 throw new BusinessException(BusinessExceptionEnum.UPDATE_SEAT_FAIL);
             }

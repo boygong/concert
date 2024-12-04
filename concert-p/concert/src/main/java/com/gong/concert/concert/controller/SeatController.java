@@ -31,4 +31,9 @@ public class SeatController {
     boolean updateStatus(@RequestBody Seat seat, @RequestParam  Short status){
         return seatService.updateStatus(seat,status);
     }
+
+    @PutMapping("/updateStatusBySeatId")
+    int updateStatusBySeatId(@RequestParam String seatId,@RequestParam Short status){
+        return seatService.updateStatusBySeatId(seatId,status);
+    }
 }

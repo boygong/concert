@@ -32,7 +32,7 @@ public class SeatServiceImpl implements SeatService {
     @Override
     public boolean updateStatus(Seat seat, Short status) {
         if (!seat.getSeatId().equals("") && seat.getSeatId() != null) {
-            int i = seatMapper.updateStatus(seat.getConcertId(), seat.getSeatId(), status);
+            int i = seatMapper.updateStatus(seat.getSeatId(), status);
             if (i == 1) {
                 return true;
             }else {
@@ -40,5 +40,10 @@ public class SeatServiceImpl implements SeatService {
             }
         }
         return false;
+    }
+
+    @Override
+    public int updateStatusBySeatId(String seatId,Short status) {
+        return seatMapper.updateStatus(seatId,status);
     }
 }

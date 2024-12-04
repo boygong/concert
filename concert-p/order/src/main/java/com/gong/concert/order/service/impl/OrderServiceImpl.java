@@ -14,6 +14,7 @@ import com.gong.concert.feign.clients.ConcertClient;
 import com.gong.concert.feign.clients.SeatClient;
 import com.gong.concert.feign.pojo.Concert;
 import com.gong.concert.feign.pojo.Seat;
+import com.gong.concert.order.dto.CancelOrderDTO;
 import com.gong.concert.order.dto.ConfirmOrderDTO;
 import com.gong.concert.order.dto.CreateOrderDTO;
 
@@ -30,6 +31,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -234,6 +236,38 @@ public class OrderServiceImpl implements OrderService {
         }
         PageResult pageResult = new PageResult(page.getTotal(),list);
         return pageResult;
+    }
+
+    @Override
+    @GlobalTransactional
+    public void cancelOrder(CancelOrderDTO dto) {
+        if (dto.getOrderId() ==null ||dto.getOrderId().equals("")){
+            throw new OrderException("传入的订单号为空");
+        }
+        Order order = orderMapper.selectById(dto.getOrderId());
+        if (order==null){
+            throw new OrderException("未查询到订单信息"+dto.getOrderId());
+        }
+        /**更新订单*/
+        Order orderDb = new Order();
+        orderDb.setOrderId(dto.getOrderId());
+        orderDb.setCancelReason(dto.getCancelReason());
+        orderDb.setOrderStatus((short) 4);//已取消
+        if (order.getPayStatus()==(short)1){
+            orderDb.setPayStatus((short) 2); //退款
+        }
+        int update = orderMapper.update(orderDb);
+        if (update!=1){
+            throw new OrderException("更新订单信息失败");
+        }
+        /**更新座位状态*/
+        List<String> seatIds =  orderDetailMapper.selectByOrderId(order.getOrderId());
+        for (String seatId : seatIds) {
+            int i = seatClient.updateStatusBySeatId(seatId,(short) 0);
+            if (i!=1){
+                throw new OrderException("更新座位"+seatId+"信息失败");
+            }
+        }
     }
 
     private static void checkSeatStatus(Short seatStatus, Integer row, Integer col) {
