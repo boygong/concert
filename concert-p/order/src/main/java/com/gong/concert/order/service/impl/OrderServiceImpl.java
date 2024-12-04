@@ -1,9 +1,13 @@
 package com.gong.concert.order.service.impl;
 
 
+import cn.hutool.core.bean.BeanUtil;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.gong.concert.common.exception.BusinessException;
 import com.gong.concert.common.exception.BusinessExceptionEnum;
 import com.gong.concert.common.exception.OrderException;
+import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.util.RedisLockUtil;
 import com.gong.concert.common.util.SnowUtil;
 import com.gong.concert.feign.clients.ConcertClient;
@@ -13,12 +17,14 @@ import com.gong.concert.feign.pojo.Seat;
 import com.gong.concert.order.dto.ConfirmOrderDTO;
 import com.gong.concert.order.dto.CreateOrderDTO;
 
+import com.gong.concert.order.dto.OrderPageQueryDTO;
 import com.gong.concert.order.entity.Order;
 import com.gong.concert.order.entity.OrderDetail;
 import com.gong.concert.order.mapper.OrderDetailMapper;
 import com.gong.concert.order.mapper.OrderMapper;
 import com.gong.concert.order.service.OrderService;
 import com.gong.concert.order.vo.CreateOrderVO;
+import com.gong.concert.order.vo.PageQueryVO;
 import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -209,6 +215,25 @@ public class OrderServiceImpl implements OrderService {
             throw new OrderException("确认订单失败");
         }
         return orderId;
+    }
+
+    @Override
+    public PageResult pageQuery(OrderPageQueryDTO dto) {
+        log.info("演唱会分页查询进入Service层:{},{},{}",dto.getPage(),dto.getSize(),dto);
+        //开始分页查询
+        PageHelper.startPage(dto.getPage(), dto.getSize());
+        Page<Order> page = orderMapper.select(dto);
+        List<Order> orders = page.getResult();
+        List<PageQueryVO> list = new ArrayList<>();
+        for (Order order : orders) {
+            int num = orderDetailMapper.selectCountByOrderId(order.getOrderId());
+            PageQueryVO pageQueryVO = new PageQueryVO();
+            BeanUtil.copyProperties(order,pageQueryVO);
+            pageQueryVO.setDetailNum(num);
+            list.add(pageQueryVO);
+        }
+        PageResult pageResult = new PageResult(page.getTotal(),list);
+        return pageResult;
     }
 
     private static void checkSeatStatus(Short seatStatus, Integer row, Integer col) {

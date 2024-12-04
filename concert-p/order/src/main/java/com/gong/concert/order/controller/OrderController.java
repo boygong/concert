@@ -1,9 +1,11 @@
 package com.gong.concert.order.controller;
 
+import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.resp.Result;
 import com.gong.concert.order.dto.ConfirmOrderDTO;
 import com.gong.concert.order.dto.CreateOrderDTO;
 
+import com.gong.concert.order.dto.OrderPageQueryDTO;
 import com.gong.concert.order.service.OrderService;
 import com.gong.concert.order.vo.CreateOrderVO;
 import jakarta.annotation.Resource;
@@ -41,5 +43,12 @@ public class OrderController {
     public Result confirmOrder(@RequestBody ConfirmOrderDTO dto){
         String confirm = orderService.confirm(dto);
         return Result.success(confirm);
+    }
+
+    @PostMapping("/pageQuery")
+    public Result pageQuery(@RequestBody OrderPageQueryDTO dto){
+        PageResult pageResult = new PageResult();
+        pageResult = orderService.pageQuery(dto);
+        return Result.success(pageResult);
     }
 }

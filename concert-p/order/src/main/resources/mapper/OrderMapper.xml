@@ -33,4 +33,30 @@
         </set>
         WHERE order_id = #{orderId}
     </update>
+
+    <select id="select" resultType="com.gong.concert.order.entity.Order">
+        SELECT *
+        FROM orders
+        <where>
+            <!-- 动态条件查询 -->
+            <if test="orderId != null and orderId != ''">order_id = #{orderId}</if>
+            <if test="userId != null and userId != ''">AND user_id = #{userId}</if>
+            <if test="concertId != null and concertId != ''">AND concert_id = #{concertId}</if>
+            <if test="userName != null and userName != ''">AND user_name = #{userName}</if>
+            <if test="phone != null and phone != ''">AND phone = #{phone}</if>
+
+            <!-- 时间范围查询 -->
+            <if test="startTime != null">AND begin_time &gt;= #{startTime}</if>
+            <if test="endTime != null">AND begin_time &lt;= #{endTime}</if>
+
+            <!-- 金额范围查询 -->
+            <if test="lowAmount != null">AND amount &gt;= #{lowAmount}</if>
+            <if test="highAmount != null">AND amount &lt;= #{highAmount}</if>
+
+            <!-- 其他条件 -->
+            <if test="payStatus != null">AND pay_status = #{payStatus}</if>
+            <if test="payMethod != null">AND pay_method = #{payMethod}</if>
+            <if test="orderStatus != null">AND order_status = #{orderStatus}</if>
+        </where>
+    </select>
 </mapper>
