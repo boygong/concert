@@ -4,9 +4,9 @@
 <mapper namespace="com.gong.concert.order.mapper.OrderMapper">
 
     <insert id="insert">
-        insert into orders(order_id, user_id, address_book_id, pay_status, pay_method, amount, remark, phone, address,
+        insert into orders(order_id, user_id, concert_id,address_book_id, pay_status, pay_method, amount, remark, phone, address,
                            user_name, consignee, begin_time,create_time,order_status)
-        VALUES (#{orderId},#{userId},#{addressBookId},#{payStatus},#{payMethod},#{amount},#{remark},#{phone}
+        VALUES (#{orderId},#{userId},#{concertId},#{addressBookId},#{payStatus},#{payMethod},#{amount},#{remark},#{phone}
                ,#{address},#{userName},#{consignee},#{beginTime},#{createTime},#{orderStatus})
     </insert>
 
@@ -15,6 +15,7 @@
         <set>
             <if test="userId != null and userId != ''">user_id = #{userId},</if>
             <if test="addressBookId != null and addressBookId != ''">address_book_id = #{addressBookId},</if>
+            <if test="concertId != null and concertId != ''">concert_id = #{concertId},</if>
             <if test="payStatus != null">pay_status = #{payStatus},</if>
             <if test="payMethod != null">pay_method = #{payMethod},</if>
             <if test="amount != null">amount = #{amount},</if>
@@ -31,7 +32,10 @@
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </set>
-        WHERE order_id = #{orderId}
+        <where>
+            <if test="orderId!=null and orderId!=''">and order_id =#{orderId}</if>
+            <if test="concertId!=null and concertId!=''">and concert_id =#{concertId}</if>
+        </where>
     </update>
 
     <select id="select" resultType="com.gong.concert.order.entity.Order">
@@ -41,6 +45,8 @@
             <!-- 动态条件查询 -->
             <if test="orderId != null and orderId != ''">order_id = #{orderId}</if>
             <if test="userId != null and userId != ''">AND user_id = #{userId}</if>
+            <if test="concertId != null and concertId != ''">AND concert_id = #{concertId}</if>
+
             <if test="concertId != null and concertId != ''">AND concert_id = #{concertId}</if>
             <if test="userName != null and userName != ''">AND user_name = #{userName}</if>
             <if test="phone != null and phone != ''">AND phone = #{phone}</if>

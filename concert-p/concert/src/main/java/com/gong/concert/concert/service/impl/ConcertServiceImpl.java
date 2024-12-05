@@ -142,7 +142,8 @@ public class ConcertServiceImpl implements ConcertService {
         List<Seat> seats = seatMapper.getByConcertId(concertId);
         for (Seat seat : seats) {
             if (seat.getSeatStatus()==5){ //待支付状态
-               //TODO 释放座位
+
+               //TODO 释放座位,释放订单
             }
             if (seat.getSeatStatus()==6){ //售出状态
                 //TODO 释放座位,退款

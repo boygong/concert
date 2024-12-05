@@ -21,4 +21,6 @@ public interface OrderService {
     void rejectOrder(RejectOrderDTO dto);
 
     OrderDetailVO detail(String orderId);
+
+    void rejectOrderBatch(RejectOrderBatchDTO dto);
 }

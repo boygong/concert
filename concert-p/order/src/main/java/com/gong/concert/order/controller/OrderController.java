@@ -69,9 +69,27 @@ public class OrderController {
         return Result.success();
     }
 
+    /**
+     * @description: (商家)退单
+     * @author: gongyuankang
+     * @date: 2024/12/5 19:51
+     * @return: com.gong.concert.common.resp.Result
+     */
     @PostMapping("/rejectOrder")
     public Result rejectOrder(@RequestBody RejectOrderDTO dto) {
         orderService.rejectOrder(dto);
+        return Result.success();
+    }
+
+    /**
+     * @description: 批量退单
+     * @author: gongyuankang
+     * @date: 2024/12/5 19:51
+     * @return: com.gong.concert.common.resp.Result
+     */
+    @PostMapping("/rejectOrderBatch")
+    public Result rejectOrderBatch(@RequestBody RejectOrderBatchDTO dto) {
+        orderService.rejectOrderBatch(dto);
         return Result.success();
     }
 
@@ -80,9 +98,9 @@ public class OrderController {
      * @author: gongyuankang
      * @date: 2024/12/5 14:00
      * @return: com.gong.concert.common.resp.Result
-    */
+     */
     @GetMapping("/detail")
-    public Result detail(@RequestParam String orderId){
+    public Result detail(@RequestParam String orderId) {
         OrderDetailVO vo = orderService.detail(orderId);
         return Result.success(vo);
     }

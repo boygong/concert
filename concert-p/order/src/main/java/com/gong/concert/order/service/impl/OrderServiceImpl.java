@@ -129,6 +129,7 @@ public class OrderServiceImpl implements OrderService {
         /*封装订单信息start*/
         orderDb.setOrderId(SnowUtil.getSnowflakeNextIdStr());
         orderDb.setUserId(String.valueOf((short)1)); //先写死
+        orderDb.setConcertId(concertId);
         orderDb.setAddressBookId(null);
         orderDb.setPayStatus((short)0);
         orderDb.setAmount(allAmount);
@@ -315,6 +316,20 @@ public class OrderServiceImpl implements OrderService {
         orderDetailVO.setDetailNum(orderDetailMapper.selectCountByOrderId(orderId));
         orderDetailVO.setOrderDetails(orderDetails);
         return orderDetailVO;
+    }
+
+    @Override
+    public void rejectOrderBatch(RejectOrderBatchDTO dto) {
+        String rejectionReason = dto.getRejectionReason();
+        String concertId = dto.getConcertId();
+        List<String> orderIds = dto.getOrderId();
+        if (orderIds.size() == 0){
+            Order orderDb = new Order();
+            orderDb.setRejectionReason(rejectionReason);
+            orderDb.setCancelTime(LocalDateTime.now());
+            orderDb.setConcertId(concertId);
+            int i = orderMapper.update(orderDb);
+        }
     }
 
     private static void checkSeatStatus(Short seatStatus, Integer row, Integer col) {

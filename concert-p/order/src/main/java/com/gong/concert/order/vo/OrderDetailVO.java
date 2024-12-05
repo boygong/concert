@@ -19,6 +19,7 @@ import java.util.List;
 public class OrderDetailVO {
     private String orderId;
     private String userId;
+    private String concertId;
     private String addressBookId;
     private Short payStatus;
     private Short payMethod;

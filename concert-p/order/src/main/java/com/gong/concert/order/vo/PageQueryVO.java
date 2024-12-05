@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 public class PageQueryVO {
     private String orderId;
     private String userId;
+    private String concertId;
     private String addressBookId;
     private Short payStatus;
     private Short payMethod;
