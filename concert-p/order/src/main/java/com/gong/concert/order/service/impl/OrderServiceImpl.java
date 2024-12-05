@@ -14,17 +14,15 @@ import com.gong.concert.feign.clients.ConcertClient;
 import com.gong.concert.feign.clients.SeatClient;
 import com.gong.concert.feign.pojo.Concert;
 import com.gong.concert.feign.pojo.Seat;
-import com.gong.concert.order.dto.CancelOrderDTO;
-import com.gong.concert.order.dto.ConfirmOrderDTO;
-import com.gong.concert.order.dto.CreateOrderDTO;
+import com.gong.concert.order.dto.*;
 
-import com.gong.concert.order.dto.OrderPageQueryDTO;
 import com.gong.concert.order.entity.Order;
 import com.gong.concert.order.entity.OrderDetail;
 import com.gong.concert.order.mapper.OrderDetailMapper;
 import com.gong.concert.order.mapper.OrderMapper;
 import com.gong.concert.order.service.OrderService;
 import com.gong.concert.order.vo.CreateOrderVO;
+import com.gong.concert.order.vo.OrderDetailVO;
 import com.gong.concert.order.vo.PageQueryVO;
 import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.Resource;
@@ -253,6 +251,8 @@ public class OrderServiceImpl implements OrderService {
         orderDb.setOrderId(dto.getOrderId());
         orderDb.setCancelReason(dto.getCancelReason());
         orderDb.setOrderStatus((short) 4);//已取消
+        orderDb.setCancelTime(LocalDateTime.now());
+        orderDb.setUpdateTime(LocalDateTime.now());
         if (order.getPayStatus()==(short)1){
             orderDb.setPayStatus((short) 2); //退款
         }
@@ -261,13 +261,60 @@ public class OrderServiceImpl implements OrderService {
             throw new OrderException("更新订单信息失败");
         }
         /**更新座位状态*/
-        List<String> seatIds =  orderDetailMapper.selectByOrderId(order.getOrderId());
+        List<String> seatIds =  orderDetailMapper.selectSeatIdByOrderId(order.getOrderId());
         for (String seatId : seatIds) {
             int i = seatClient.updateStatusBySeatId(seatId,(short) 0);
             if (i!=1){
                 throw new OrderException("更新座位"+seatId+"信息失败");
             }
         }
+    }
+
+    @Override
+    public void rejectOrder(RejectOrderDTO dto) {
+        if (dto.getOrderId() ==null ||dto.getOrderId().equals("")){
+            throw new OrderException("传入的订单号为空");
+        }
+        Order order = orderMapper.selectById(dto.getOrderId());
+        if (order==null){
+            throw new OrderException("未查询到订单信息"+dto.getOrderId());
+        }
+        /**更新订单*/
+        Order orderDb = new Order();
+        orderDb.setOrderId(dto.getOrderId());
+        orderDb.setCancelReason(dto.getRejectionReason());
+        orderDb.setOrderStatus((short) 5);//已拒绝
+        orderDb.setCancelTime(LocalDateTime.now());
+        orderDb.setUpdateTime(LocalDateTime.now());
+        if (order.getPayStatus()==(short)1){
+            orderDb.setPayStatus((short) 2); //退款
+        }
+        int update = orderMapper.update(orderDb);
+        if (update!=1){
+            throw new OrderException("更新订单信息失败");
+        }
+        /**更新座位状态*/
+        List<String> seatIds =  orderDetailMapper.selectSeatIdByOrderId(order.getOrderId());
+        for (String seatId : seatIds) {
+            int i = seatClient.updateStatusBySeatId(seatId,(short) 0);
+            if (i!=1){
+                throw new OrderException("更新座位"+seatId+"信息失败");
+            }
+        }
+    }
+
+    @Override
+    public OrderDetailVO detail(String orderId) {
+        if (orderId==null ||orderId.equals("")){
+            throw new OrderException("查询订单明细传入的订单id为空");
+        }
+        Order order = orderMapper.selectById(orderId);
+        List<OrderDetail> orderDetails = orderDetailMapper.selectByOrderId(orderId);
+        OrderDetailVO orderDetailVO = new OrderDetailVO();
+        BeanUtil.copyProperties(order,orderDetailVO);
+        orderDetailVO.setDetailNum(orderDetailMapper.selectCountByOrderId(orderId));
+        orderDetailVO.setOrderDetails(orderDetails);
+        return orderDetailVO;
     }
 
     private static void checkSeatStatus(Short seatStatus, Integer row, Integer col) {

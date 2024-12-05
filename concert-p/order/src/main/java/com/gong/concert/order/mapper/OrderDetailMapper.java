@@ -17,6 +17,8 @@ public interface OrderDetailMapper {
     int selectCountByOrderId(String orderId);
 
     @Select("select t.seat_id from order_detail t where order_id=#{orderId}")
-    List<String> selectByOrderId(String orderId);
+    List<String> selectSeatIdByOrderId(String orderId);
 
+    @Select("select * from order_detail where order_id = #{orderId}")
+    List<OrderDetail> selectByOrderId(String orderId);
 }

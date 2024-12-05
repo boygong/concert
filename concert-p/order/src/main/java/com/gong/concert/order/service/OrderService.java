@@ -1,11 +1,9 @@
 package com.gong.concert.order.service;
 
 import com.gong.concert.common.resp.PageResult;
-import com.gong.concert.order.dto.CancelOrderDTO;
-import com.gong.concert.order.dto.ConfirmOrderDTO;
-import com.gong.concert.order.dto.CreateOrderDTO;
-import com.gong.concert.order.dto.OrderPageQueryDTO;
+import com.gong.concert.order.dto.*;
 import com.gong.concert.order.vo.CreateOrderVO;
+import com.gong.concert.order.vo.OrderDetailVO;
 
 /**
  * @Author ToastFish
@@ -19,4 +17,8 @@ public interface OrderService {
     PageResult pageQuery(OrderPageQueryDTO dto);
 
     void cancelOrder(CancelOrderDTO dto);
+
+    void rejectOrder(RejectOrderDTO dto);
+
+    OrderDetailVO detail(String orderId);
 }
