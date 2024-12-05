@@ -21,4 +21,7 @@ public interface OrderMapper {
     int update(Order orderDb);
 
     Page<Order> select(OrderPageQueryDTO dto);
+
+    @Select("SELECT order_id from orders where concert_id=#{concertId}")
+    List<String> selectOrderIdByConcertId(String concertId);
 }

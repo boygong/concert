@@ -7,6 +7,7 @@ import com.github.pagehelper.PageHelper;
 import com.gong.concert.common.enums.ConcertStatusEnum;
 import com.gong.concert.common.exception.BusinessException;
 import com.gong.concert.common.exception.BusinessExceptionEnum;
+import com.gong.concert.common.exception.OrderException;
 import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.util.SnowUtil;
 import com.gong.concert.concert.dto.QueryConcertByPageDTO;
@@ -20,8 +21,12 @@ import com.gong.concert.concert.mapper.TheaterMapper;
 import com.gong.concert.concert.service.ConcertService;
 import com.gong.concert.concert.vo.ConcertForUser;
 import com.gong.concert.concert.vo.ConcertVO;
+import com.gong.concert.feign.clients.OrderClient;
+import com.gong.concert.feign.pojo.RejectOrderBatchDTO;
+import com.gong.concert.feign.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +49,8 @@ public class ConcertServiceImpl implements ConcertService {
 
     @Autowired
     private SeatMapper seatMapper;
+    @Autowired
+    private OrderClient orderClient;
 
     @Override
     @Transactional(rollbackFor = Exception.class) // 确保事务回滚
@@ -141,12 +148,20 @@ public class ConcertServiceImpl implements ConcertService {
         log.info("开始释放、停售、退款演唱会订单、座位");
         List<Seat> seats = seatMapper.getByConcertId(concertId);
         for (Seat seat : seats) {
-            if (seat.getSeatStatus()==5){ //待支付状态
-
-               //TODO 释放座位,释放订单
-            }
-            if (seat.getSeatStatus()==6){ //售出状态
-                //TODO 释放座位,退款
+//            if (seat.getSeatStatus()==5){ //待支付状态
+//
+//               //TODO 释放座位,释放订单
+//            }
+//            if (seat.getSeatStatus()==6){ //售出状态
+//                //TODO 释放座位,退款
+//            }
+            RejectOrderBatchDTO rejectOrderBatchDTO = new RejectOrderBatchDTO();
+            rejectOrderBatchDTO.setConcertId(concertId);
+            rejectOrderBatchDTO.setRejectionReason("演唱会停售，自动退还订单");
+            rejectOrderBatchDTO.setInUrl((short) 1);
+            Result result = orderClient.rejectOrderBatch(rejectOrderBatchDTO);
+            if(result.getCode()!=1){
+                throw new OrderException("订单释放失败"+result.getMsg());
             }
             if (seat.getSeatStatus()==2){ //维修状态
                 continue; //跳过这个座位

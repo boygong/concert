@@ -323,12 +323,47 @@ public class OrderServiceImpl implements OrderService {
         String rejectionReason = dto.getRejectionReason();
         String concertId = dto.getConcertId();
         List<String> orderIds = dto.getOrderId();
-        if (orderIds.size() == 0){
+        List<String> updateSeatId = new ArrayList<>();
+        if (orderIds==null || orderIds.size() == 0){
             Order orderDb = new Order();
             orderDb.setRejectionReason(rejectionReason);
             orderDb.setCancelTime(LocalDateTime.now());
             orderDb.setConcertId(concertId);
+            orderDb.setOrderStatus((short) 5); //退订
             int i = orderMapper.update(orderDb);
+            List<String> orderIdDbs = orderMapper.selectOrderIdByConcertId(concertId);
+            checkNum(updateSeatId, i, orderIdDbs);
+        }else {
+            for (String orderId : orderIds) {
+                Order orderDb = new Order();
+                orderDb.setOrderId(orderId);
+                orderDb.setOrderStatus((short) 5); //退订
+                orderDb.setRejectionReason(rejectionReason);
+                orderDb.setCancelTime(LocalDateTime.now());
+                int i = orderMapper.update(orderDb);
+                List<String> orderIdDbs = orderDetailMapper.selectSeatIdByOrderId(orderId);
+                checkNum(updateSeatId, i, orderIdDbs);
+            }
+        }
+
+        if(dto.getInUrl()==null){ //不是feign调入，需处理座位释放
+            for (String s : updateSeatId) {
+                seatClient.updateStatusBySeatId(s,(short) 0);//启用
+            }
+        }
+    }
+
+    //检查订单明细
+    private void checkNum(List<String> updateSeatId, int i, List<String> orderIdDbs) {
+        for (String orderIdDb : orderIdDbs) {
+            List<String> seatIdByOrderId = orderDetailMapper.selectSeatIdByOrderId(orderIdDb);
+            for (String s : seatIdByOrderId) {
+                updateSeatId.add(s);
+            }
+        }
+        log.info("更新订单影响行数:{}", i);
+        if(i != updateSeatId.size()){
+            throw new OrderException("订单明细数与需更新的座位数不一致");
         }
     }
 

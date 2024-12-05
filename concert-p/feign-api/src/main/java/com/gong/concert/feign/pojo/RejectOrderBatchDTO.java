@@ -1,4 +1,4 @@
-package com.gong.concert.order.dto;
+package com.gong.concert.feign.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
