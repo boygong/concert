@@ -148,13 +148,6 @@ public class ConcertServiceImpl implements ConcertService {
         log.info("开始释放、停售、退款演唱会订单、座位");
         List<Seat> seats = seatMapper.getByConcertId(concertId);
         for (Seat seat : seats) {
-//            if (seat.getSeatStatus()==5){ //待支付状态
-//
-//               //TODO 释放座位,释放订单
-//            }
-//            if (seat.getSeatStatus()==6){ //售出状态
-//                //TODO 释放座位,退款
-//            }
             RejectOrderBatchDTO rejectOrderBatchDTO = new RejectOrderBatchDTO();
             rejectOrderBatchDTO.setConcertId(concertId);
             rejectOrderBatchDTO.setRejectionReason("演唱会停售，自动退还订单");
