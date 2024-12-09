@@ -22,6 +22,11 @@
                     <user-outlined/> &nbsp; 演唱会管理
                 </router-link>
             </a-menu-item>
+            <a-menu-item key="/order">
+                <router-link to="/order">
+                    <user-outlined/> &nbsp; 订单管理
+                </router-link>
+            </a-menu-item>
         </a-menu>
     </a-layout-sider>
 </template>
