@@ -29,6 +29,9 @@ const routes = [
     },{
       path:'concert',
       component:()=>import('@/views/main/concert.vue')
+    },{
+      path:'order',
+      component:()=>import('@/views/main/order.vue')
     }]
   },{
     path:'',
