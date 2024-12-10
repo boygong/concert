@@ -2,45 +2,121 @@
     <div>
         <h1>订单管理页面</h1>
 
+
         <!-- 模糊查询表单 -->
         <a-form layout="inline" @submit.prevent="onSearch">
-            <!-- 表单项代码省略，保持不变 -->
+            <a-form-item label="订单号">
+                <a-input v-model:value="filters.orderId" placeholder="请输入订单号" />
+            </a-form-item>
+            <a-form-item label="用户编号">
+                <a-input v-model:value="filters.userId" placeholder="请输入用户编号" />
+            </a-form-item>
+            <a-form-item label="演唱会编号">
+                <a-input v-model:value="filters.concertId" placeholder="请输入演唱会编号" />
+            </a-form-item>
+            <a-form-item label="用户名">
+                <a-input v-model:value="filters.userName" placeholder="请输入用户名" />
+            </a-form-item>
+            <a-form-item label="手机号">
+                <a-input v-model:value="filters.phone" placeholder="请输入手机号" />
+            </a-form-item>
+            <a-form-item label="支付状态">
+                <a-select v-model:value="filters.payStatus" placeholder="选择支付状态">
+                    <a-select-option value="0">未支付</a-select-option>
+                    <a-select-option value="1">已支付</a-select-option>
+                    <a-select-option value="2">退款</a-select-option>
+                </a-select>
+            </a-form-item>
+            <a-form-item label="订单状态">
+                <a-select v-model:value="filters.orderStatus" placeholder="选择订单状态">
+                    <a-select-option value="0">待确认</a-select-option>
+                    <a-select-option value="1">已确认</a-select-option>
+                    <a-select-option value="2">已付款</a-select-option>
+                    <a-select-option value="3">已取票</a-select-option>
+                    <a-select-option value="4">已取消</a-select-option>
+                    <a-select-option value="5">已拒绝</a-select-option>
+                </a-select>
+            </a-form-item>
+            <a-form-item label="金额范围">
+                <a-input v-model:value="filters.lowAmount" placeholder="最低金额" style="width: 120px" />
+                <span> - </span>
+                <a-input v-model:value="filters.highAmount" placeholder="最高金额" style="width: 120px" />
+            </a-form-item>
+            <a-form-item label="时间范围">
+                <a-date-picker v-model:value="filters.startTime" placeholder="开始时间" style="width: 200px" />
+                <span> - </span>
+                <a-date-picker v-model:value="filters.endTime" placeholder="结束时间" style="width: 200px" />
+            </a-form-item>
+            <a-form-item>
+                <a-button type="primary" @click="onSearch">查询</a-button>
+                <a-button @click="resetFilters" style="margin-left: 8px">重置</a-button>
+            </a-form-item>
         </a-form>
 
         <!-- 订单表格 -->
-        <a-table :columns="columns" :data-source="orders" :pagination="false" row-key="orderId" style="margin-top: 20px">
+        <a-table :columns="columns" :data-source="orders" :pagination="false" row-key="orderId"
+            style="margin-top: 20px">
             <template v-slot:action="{ record }">
                 <a-button @click="viewDetail(record.orderId)" type="link">查看明细</a-button>
             </template>
         </a-table>
 
         <!-- 订单详情弹框 -->
-        <a-modal v-model:visible="detailVisible" title="订单详情" @cancel="closeDetail" @ok="closeDetail">
-            <p><strong>订单号:</strong> {{ orderDetail.orderId }}</p>
-            <p><strong>用户名:</strong> {{ orderDetail.userName }}</p>
-            <p><strong>手机号:</strong> {{ orderDetail.phone }}</p>
-            <p><strong>支付状态:</strong> {{ getPayStatus(orderDetail.payStatus) }}</p>
-            <p><strong>支付方式:</strong> {{ getPayMethod(orderDetail.payMethod) }}</p>
-            <p><strong>金额:</strong> {{ orderDetail.amount }}</p>
-            <p><strong>备注:</strong> {{ orderDetail.remark }}</p>
-
-            <!-- 明细列表 -->
-            <a-list
-                v-if="orderDetail.orderDetails"
-                :data-source="orderDetail.orderDetails"
-                bordered
-                renderItem="detail">
-                <template v-slot:item="{ item }">
-                    <a-list-item>
-                        <p>座位号: {{ item.row }} 排 {{ item.col }} 列</p>
-                        <p>金额: {{ item.amount }}</p>
-                    </a-list-item>
-                </template>
-            </a-list>
+        <!-- 订单详情弹框 -->
+        <a-modal v-model:visible="detailVisible" title="订单详情" @cancel="closeDetail" @ok="closeDetail" ok-text="确认"
+            cancel-text="取消">
+            <a-form :model="orderDetail" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
+                <a-form-item label="订单号">
+                    <a-input v-model:value="orderDetail.orderId" disabled />
+                </a-form-item>
+                <a-form-item label="用户名">
+                    <a-input v-model:value="orderDetail.userName" disabled />
+                </a-form-item>
+                <a-form-item label="手机号">
+                    <a-input v-model:value="orderDetail.phone" disabled />
+                </a-form-item>
+                <a-form-item label="支付状态">
+                    <a-select v-model:value="orderDetail.payStatus" disabled>
+                        <a-select-option :value="0">未支付</a-select-option>
+                        <a-select-option :value="1">已支付</a-select-option>
+                        <a-select-option :value="2">退款</a-select-option>
+                    </a-select>
+                </a-form-item>
+                <a-form-item label="支付方式">
+                    <a-select v-model:value="orderDetail.payMethod" disabled>
+                        <a-select-option :value="0">线上支付</a-select-option>
+                        <a-select-option :value="1">线下支付</a-select-option>
+                    </a-select>
+                </a-form-item>
+                <a-form-item label="金额">
+                    <a-input v-model:value="orderDetail.amount" disabled />
+                </a-form-item>
+                <a-form-item label="备注">
+                    <a-input v-model:value="orderDetail.remark" disabled />
+                </a-form-item>
+                <a-form-item label="订单状态">
+                    <a-select v-model:value="orderDetail.orderStatus" disabled>
+                        <a-select-option :value="0">待确认</a-select-option>
+                        <a-select-option :value="1">已确认</a-select-option>
+                        <a-select-option :value="2">已付款</a-select-option>
+                        <a-select-option :value="3">已取票</a-select-option>
+                        <a-select-option :value="4">已取消</a-select-option>
+                        <a-select-option :value="5">已拒绝</a-select-option>
+                    </a-select>
+                </a-form-item>
+            </a-form>
+            <!-- 展示订单明细 -->
+            <a-table :columns="detailColumns" :data-source="orderDetail.orderDetails" row-key="orderDetailId"
+                style="margin-top: 20px" :pagination="false">
+                <a-table-column title="座位号" dataIndex="row" key="row" />
+                <a-table-column title="座位列" dataIndex="col" key="col" />
+                <a-table-column title="价格" dataIndex="amount" key="amount" />
+            </a-table>
         </a-modal>
 
         <!-- 分页组件 -->
-        <a-pagination :current="pagination.current" :page-size="pagination.pageSize" :total="pagination.total" :show-total="showTotal" @change="onPageChange" style="margin-top: 20px; text-align: right" />
+        <a-pagination :current="pagination.current" :page-size="pagination.pageSize" :total="pagination.total"
+            :show-total="showTotal" @change="onPageChange" style="margin-top: 20px; text-align: right" />
     </div>
 </template>
 
@@ -68,6 +144,44 @@ export default defineComponent({
             lowAmount: "",
             highAmount: "",
         });
+
+        const orderDetail = ref({
+            orderId: "",
+            userName: "",
+            phone: "",
+            payStatus: 0,
+            payMethod: 0,
+            amount: 0,
+            remark: "",
+            orderStatus: 0,
+            orderDetails: [],
+        });
+        const detailVisible = ref(false);
+
+        // 查看订单详情
+        const viewDetail = async (orderId) => {
+            console.log(orderId)
+            try {
+                const response = await axios.get("/order/order/detail", {
+                    params: { orderId }
+                });
+
+                if (response.data.code === 1) {
+                    console.log("查询明细成功");
+                    orderDetail.value = response.data.data;
+                    detailVisible.value = true;
+                } else {
+                    notification.error({ message: response.data.msg });
+                }
+            } catch (error) {
+                message.error("加载订单详情失败！");
+            }
+        };
+
+        // 关闭弹窗
+        const closeDetail = () => {
+            detailVisible.value = false;
+        };
 
         // 显示总数
         const showTotal = (total) => `总共 ${total} 条`;
@@ -193,6 +307,20 @@ export default defineComponent({
                 dataIndex: "remark",
                 key: "remark",
             },
+            {
+                title: "操作",
+                key: "action",
+                customRender: ({ record }) => {
+                    return h('a', { onClick: () => viewDetail(record.orderId) }, '查看明细');
+                },
+            },
+        ];
+
+        const detailColumns = [
+            { title: "座位编码", dataIndex: "seatId", key: "seatId" },
+            { title: "座位行", dataIndex: "row", key: "row" },
+            { title: "座位列", dataIndex: "col", key: "col" },
+            { title: "价格", dataIndex: "amount", key: "amount" },
         ];
 
         // 查询订单
@@ -261,6 +389,11 @@ export default defineComponent({
             onSearch,
             resetFilters,
             onPageChange,
+            orderDetail,
+            detailVisible,
+            detailColumns,
+            viewDetail,
+            closeDetail,
         };
     },
 });
