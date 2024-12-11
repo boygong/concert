@@ -216,7 +216,7 @@ export default defineComponent({
         // 分页信息
         const pagination = ref({
             current: 1,
-            pageSize: 4,
+            pageSize: 10,
             total: 0,
         });
 
