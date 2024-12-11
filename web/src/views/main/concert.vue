@@ -83,7 +83,25 @@
             <a-table-column title="创建人" dataIndex="createUser" />
             <a-table-column title="操作">
                 <template #default="{ record }">
+                    <!-- 编辑按钮 -->
                     <a-button type="link" @click="openEditConcert(record.concertId)">编辑</a-button>
+
+                    <!-- 停售按钮 -->
+                    <a-button v-if="record.status === 1 || record.status === 3" type="primary" danger
+                        @click="stopConcert(record.concertId)" :disabled="record.status === 2">
+                        停售
+                    </a-button>
+
+                    <!-- 起售按钮 -->
+                    <a-button v-if="record.status === 0 || record.status === 2" type="primary"
+                        @click="startConcert(record.concertId)" :disabled="record.status !== 2">
+                        起售
+                    </a-button>
+
+                    <!-- 审核中按钮 -->
+                    <a-button v-if="record.status === -1" type="default" disabled>
+                        审核中
+                    </a-button>
                 </template>
             </a-table-column>
         </a-table>
@@ -171,7 +189,7 @@ export default defineComponent({
         const loading = ref(false);
         const pagination = reactive({
             current: 1,
-            pageSize: 3,
+            pageSize: 5,
             total: 0
         });
         /***新增演唱会 */
@@ -344,6 +362,41 @@ export default defineComponent({
             return new Date(date).toLocaleString();
         };
 
+        // 启动演唱会
+        const startConcert = async (concertId) => {
+            try {
+                const response = await axios.put('/concert/concert/start', null, {
+                    params: { concertId }
+                });
+                if (response.data.code === 1) {
+                    notification.success({ message: '演唱会已起售' });
+                    fetchConcerts();
+                } else {
+                    notification.error({ message: response.data.msg });
+                }
+            } catch (error) {
+                notification.error({ message: '起售失败', description: error.message });
+            }
+        };
+
+        // 停售演唱会
+        const stopConcert = async (concertId) => {
+            try {
+                const response = await axios.put('/concert/concert/stop', null, {
+                    params: { concertId }
+                });
+
+                if (response.data.code === 1) {
+                    notification.success({ message: '演唱会已停售' });
+                    fetchConcerts();
+                } else {
+                    notification.error({ message: response.data.msg });
+                }
+            } catch (error) {
+                notification.error({ message: '停售失败', description: error.message });
+            }
+        };
+
         // 初始化加载
         fetchConcerts();
 
@@ -368,6 +421,8 @@ export default defineComponent({
             openEditConcert,
             currentConcertId,
             isDrawerVisible,
+            startConcert,
+            stopConcert
         };
     }
 });
