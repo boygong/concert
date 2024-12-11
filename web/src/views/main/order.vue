@@ -57,11 +57,24 @@
         <a-table :columns="columns" :data-source="orders" :pagination="false" row-key="orderId"
             style="margin-top: 20px">
             <template v-slot:action="{ record }">
-                <a-button @click="viewDetail(record.orderId)" type="link">查看明细</a-button>
+                <!-- 查看明细按钮 -->
+                <a-button type="primary" primary @click="viewDetail(record.orderId)">查看明细</a-button>
+                
+                <!-- 拒绝订单按钮 -->
+                <a-button type="primary" danger ghost style="margin-left: 8px;" @click="showRejectModal(record)">拒绝订单</a-button>
             </template>
         </a-table>
 
-        <!-- 订单详情弹框 -->
+         <!-- 拒绝理由输入弹窗 -->
+         <a-modal v-model:visible="rejectModalVisible" title="拒绝订单" @cancel="closeRejectModal" @ok="rejectOrder" ok-text="确认"
+            cancel-text="取消">
+            <a-form :model="rejectionForm" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+                <a-form-item label="拒绝理由">
+                    <a-input v-model:value="rejectionForm.rejectionReason" placeholder="请输入拒绝理由" />
+                </a-form-item>
+            </a-form>
+        </a-modal>
+
         <!-- 订单详情弹框 -->
         <a-modal v-model:visible="detailVisible" title="订单详情" @cancel="closeDetail" @ok="closeDetail" ok-text="确认"
             cancel-text="取消">
@@ -157,6 +170,17 @@ export default defineComponent({
             orderDetails: [],
         });
         const detailVisible = ref(false);
+         // 拒绝理由弹窗的状态
+         const rejectModalVisible = ref(false);
+        const rejectionForm = ref({
+            rejectionReason: "",
+        });
+        const currentRejectOrderId = ref(null);  // 当前拒绝的订单ID
+
+        const closeRejectModal = () => {
+            rejectModalVisible.value = false;
+            rejectionForm.value.rejectionReason = "";  // 清空输入框
+        };
 
         // 查看订单详情
         const viewDetail = async (orderId) => {
@@ -310,10 +334,29 @@ export default defineComponent({
             {
                 title: "操作",
                 key: "action",
-                customRender: ({ record }) => {
-                    return h('a', { onClick: () => viewDetail(record.orderId) }, '查看明细');
-                },
-            },
+                slots: { customRender: 'action' },
+            }
+            // {
+            //     title: "操作",
+            //     key: "action",
+            //     customRender: ({ record }) => {
+            //         return h('div', [
+            //             // 查看明细按钮，使用 "default" 类型显示为常规按钮样式
+            //             h('a-button', {
+            //                 type: 'default', // 或 'primary' 根据需要选择
+            //                 onClick: () => viewDetail(record.orderId),
+            //             }, '查看明细'),
+
+            //             // 拒绝订单按钮，使用 "danger" 类型并设置颜色为红色
+            //             h('a-button', {
+            //                 type: 'danger', // 设置为危险按钮样式（红色）
+            //                 style: { marginLeft: '8px' },
+            //                 onClick: () => showRejectModal(record),
+            //             }, '拒绝订单')
+            //         ]);
+            //     },
+            // },
+
         ];
 
         const detailColumns = [
@@ -380,6 +423,37 @@ export default defineComponent({
         // 初始化加载
         fetchOrders();
 
+        // 显示拒绝订单的弹窗
+        const showRejectModal = (record) => {
+            currentRejectOrderId.value = record.orderId;
+            rejectModalVisible.value = true;
+        };
+        // 拒绝订单接口调用
+        const rejectOrder = async () => {
+            const rejectionReason = rejectionForm.value.rejectionReason;
+            if (!rejectionReason) {
+                message.error("请输入拒绝理由");
+                return;
+            }
+
+            try {
+                const response = await axios.post("/order/order/rejectOrder", {
+                    orderId: currentRejectOrderId.value,
+                    rejectionReason,
+                });
+
+                if (response.data.code === 1) {
+                    message.success("订单已拒绝");
+                    rejectModalVisible.value = false;
+                    fetchOrders();  // 刷新订单列表
+                } else {
+                    notification.error({ message: response.data.msg });
+                }
+            } catch (error) {
+                message.error("拒绝订单失败！");
+            }
+        };
+
         return {
             showTotal,
             filters,
@@ -394,6 +468,12 @@ export default defineComponent({
             detailColumns,
             viewDetail,
             closeDetail,
+            rejectModalVisible,
+            rejectionForm,
+            currentRejectOrderId,
+            showRejectModal,
+            closeRejectModal,
+            rejectOrder,
         };
     },
 });
