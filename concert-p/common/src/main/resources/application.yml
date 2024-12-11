@@ -24,4 +24,15 @@ spring:
       database: 0
       port: 15112
 
+#spring:
+#  data:
+#    redis:
+#      host: toastfish3.rwlb.rds.aliyuncs.com
+#      username: concert_redis
+#      password: Concert123
+#      timeout: 5000
+#      database: 0
+#      port: 15112
+
+
 
