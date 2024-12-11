@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import login from '@/views/login.vue'
+import userlogin from '@/views/user/userLogin.vue'
 import store from '@/store'
 import { notification } from 'ant-design-vue'
 
@@ -10,6 +11,12 @@ const routes = [
     name:'login',
     meta: { userType: 'guest' },  // 设置 meta 标识当前是登录页面
     component:login
+  },
+  {
+    path:'/userlogin',
+    name:'userlogin',
+    meta: { userType: 'guest' },  // 设置 meta 标识当前是登录页面
+    component:userlogin
   },
   
   {
@@ -42,7 +49,15 @@ const routes = [
   },{
     path:'',
     redirect: '/welcome'
-  }
+  },
+  // {
+  //   path:'/user',
+  //   children:[{
+  //     path:'login',
+  //     component:()=>import('@/vi'),
+  //     meta:{userType:'business'}
+  //   }]
+  // }
 ]
 
 const router = createRouter({
