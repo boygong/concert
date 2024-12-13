@@ -21,7 +21,7 @@ const routes = [
   {
     path:'/userPage',
     name:'userPage',
-    meta:{userType:'guest'},
+    // meta:{userType:'user',loginRequire:true},
     component:()=>import('@/views/user/userPage.vue')
   },
   
@@ -82,12 +82,26 @@ router.beforeEach((to, from, next) => {
   // 校验是否需要登录
   if (to.matched.some(item => item.meta.loginRequire)) {
     const _business = store.state.business;
-    if (!_business.token) {
-      notification.error({ description: "未登录或登录超时" });
-      next('/login');
-    } else {
-      next();
+    const _user = store.state.user;
+    console.log("当前用户身份:",userType)
+    if(userType === 'business'){
+      if (!_business.token) {
+        console.log("未登录或登录超时");
+        notification.error({ description: "未登录或登录超时" });
+        next('/login');
+      } else {
+        next();
+      }
+    }else if(userType === 'user'){
+      if (!_user.token) {
+        console.log("未登录或登录超时");
+        notification.error({ description: "未登录或登录超时" });
+        next('/userLogin');
+      } else {
+        next();
+      }
     }
+   
   } else {
     next();
   }

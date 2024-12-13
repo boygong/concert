@@ -4,6 +4,8 @@ const BUSINESS = "BUSINESS";
 
 const USER = "USER";
 
+const USERTYPE = "USERTYPE";
+
 export default createStore({
   state: {
     business: window.SessionStorage.get(BUSINESS) || {},
@@ -30,6 +32,14 @@ export default createStore({
     removeUser(state) {
       state.user = {};
       window.SessionStorage.remove(USER);  // 移除用户信息
+    },
+    setUserType(state,_userType){
+      state.userType = _userType;
+      window.SessionStorage.set(USERTYPE,_userType);
+    },
+    removeUserType(state){
+      state.userType={},
+      window.SessionStorage.remove(USERTYPE);
     }
   },
   actions: {

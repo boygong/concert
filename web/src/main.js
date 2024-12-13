@@ -17,6 +17,7 @@ for (const i in icons) {
 
 // main.js
 axios.interceptors.request.use(function (config) {
+    console.log('请求参数:', config);
     const userType = store.state.userType;  // 从 Vuex 获取当前的用户类型
     let token = '';
 
