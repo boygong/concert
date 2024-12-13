@@ -18,6 +18,12 @@ const routes = [
     meta: { userType: 'guest' },  // 设置 meta 标识当前是登录页面
     component:userlogin
   },
+  {
+    path:'/userPage',
+    name:'userPage',
+    meta:{userType:'guest'},
+    component:()=>import('@/views/user/userPage.vue')
+  },
   
   {
     path:'/',
