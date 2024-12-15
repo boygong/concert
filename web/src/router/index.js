@@ -18,13 +18,27 @@ const routes = [
     meta: { userType: 'guest' },  // 设置 meta 标识当前是登录页面
     component:userlogin
   },
+  // {
+  //   path:'/userPage',
+  //   name:'userPage',
+  //   // meta:{userType:'user',loginRequire:true},
+  //   component:()=>import('@/views/user/userPage.vue')
+  // },
   {
-    path:'/userPage',
-    name:'userPage',
-    // meta:{userType:'user',loginRequire:true},
-    component:()=>import('@/views/user/userPage.vue')
+    path: '/user',
+    component: () => import('@/views/userMain.vue'),
+    children: [
+      {
+        path: '',  // 空路径，这样当访问 `/user` 时会跳转到 `userPage`
+        redirect: 'userPage'  // 自动跳转到 userPage
+      },
+      {
+        path: '/userPage',  // 相对路径
+        component: () => import('@/views/user/userPage.vue'),
+        meta: { userType: 'guest' }
+      }
+    ]
   },
-  
   {
     path:'/',
     component: () => import('../views/main.vue'),

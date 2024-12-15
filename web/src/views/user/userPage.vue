@@ -7,19 +7,7 @@
                     <a-breadcrumb-item>活动展示</a-breadcrumb-item>
                 </a-breadcrumb>
             </template>
-            <div class="user-info">
-                <template v-if="user.name">
-                    您好: {{ user.name }}
-                    <router-link to="/login" class="logout-link" @click="remove">
-                        退出登录
-                    </router-link>
-                </template>
-                <template v-else>
-                    <a-button type="link" class="login-button" @click="navigateToLogin">
-                        请登录
-                    </a-button>
-                </template>
-            </div>
+           
         </a-page-header>
     </div>
 
@@ -67,25 +55,10 @@
         </div>
     </div>
 
-    <div style="float: right; color: white;">
-        <template v-if="user.name">
-            您好: {{ user.name }}
-            <router-link to="/login" style="color: white;" @click="remove">
-                退出登录
-            </router-link>
-        </template>
-        <template v-else>
-            <a-button type="link" style="color: white;" @click="navigateToLogin">
-                请登录
-            </a-button>
-        </template>
-    </div>
-
 </template>
 
 <script>
 import { defineComponent, reactive, onMounted } from 'vue';
-import router from '@/router'
 import axios from 'axios';
 import store from '@/store';
 
@@ -166,13 +139,7 @@ export default defineComponent({
             }
         };
 
-        const remove = () => {
-            store.commit("setUser",{});
-        };
-
-        const navigateToLogin = () => {
-            router.push('/userLogin');
-        };
+      
 
         onMounted(() => {
             // Example: Fetching user info from localStorage or API
@@ -188,8 +155,6 @@ export default defineComponent({
             fetchConcerts,
             fetchMusics,
             user,
-            remove,
-            navigateToLogin
         };
     },
 });
