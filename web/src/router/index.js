@@ -40,6 +40,11 @@ const routes = [
         path:'/userOrder',
         component: () => import('@/views/user/userOrder.vue'),
         meta: { userType: 'user' ,loginRequire: true}
+      },{
+        path:'/createOrder/:concertId',
+        name:'createOrder',
+        component: () => import('@/views/user/createOrder.vue'),
+        meta: { userType: 'user' ,loginRequire: true}
       }
     ]
   },

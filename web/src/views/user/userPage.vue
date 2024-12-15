@@ -7,7 +7,7 @@
                     <a-breadcrumb-item>活动展示</a-breadcrumb-item>
                 </a-breadcrumb>
             </template>
-           
+
         </a-page-header>
     </div>
 
@@ -15,7 +15,9 @@
         <h2>演唱会</h2>
         <a-row :gutter="[20, 20]">
             <a-col :span="6" v-for="concert in concerts" :key="concert.concertId">
-                <a-card class="concert-card" :hoverable="true" :title="concert.name">
+                <!-- 在这里添加点击事件 -->
+                <a-card class="concert-card" :hoverable="true" :title="concert.name"
+                    @click="goToCreateOrder(concert.concertId)">
                     <template #cover>
                         <img :src="concert.photo" alt="cover" class="concert-image" />
                     </template>
@@ -37,7 +39,9 @@
         <h2>音乐会</h2>
         <a-row :gutter="[20, 20]">
             <a-col :span="6" v-for="music in musics" :key="music.concertId">
-                <a-card class="concert-card" :hoverable="true" :title="music.name">
+                <!-- 在这里添加点击事件 -->
+                <a-card class="concert-card" :hoverable="true" :title="music.name"
+                    @click="goToCreateOrder(music.concertId)">
                     <template #cover>
                         <img :src="music.photo" alt="cover" class="concert-image" />
                     </template>
@@ -61,6 +65,7 @@
 import { defineComponent, reactive, onMounted } from 'vue';
 import axios from 'axios';
 import store from '@/store';
+import router from '@/router';
 
 
 export default defineComponent({
@@ -138,8 +143,10 @@ export default defineComponent({
                 console.error('Failed to fetch musics:', error);
             }
         };
+        const goToCreateOrder = async (id)=> {
+            router.push({ name: 'createOrder', params: { concertId: id } });
+        };
 
-      
 
         onMounted(() => {
             // Example: Fetching user info from localStorage or API
@@ -155,6 +162,7 @@ export default defineComponent({
             fetchConcerts,
             fetchMusics,
             user,
+            goToCreateOrder
         };
     },
 });
