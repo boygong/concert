@@ -36,6 +36,10 @@ const routes = [
         path: '/userPage',  // 相对路径
         component: () => import('@/views/user/userPage.vue'),
         meta: { userType: 'guest' }
+      },{
+        path:'/userOrder',
+        component: () => import('@/views/user/userOrder.vue'),
+        meta: { userType: 'user' ,loginRequire: true}
       }
     ]
   },
