@@ -33,8 +33,8 @@
       const router = useRouter();
   
       const loginForm = reactive({
-        username: 'admin',
-        password: 'admin',
+        username: 'user1',
+        password: '123456',
       });
   
       const login = () => {
@@ -44,7 +44,7 @@
           if (data.code == 1) {
             notification.success({ description: '登录成功！' });
             // 登录成功，跳到控台主页
-            router.push("/welcome");
+            router.push("/userPage");
             console.log(data.data)
             store.commit("setUser",data.data);
           } else {
