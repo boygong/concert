@@ -48,12 +48,13 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineComponent } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { message } from 'ant-design-vue';
+import store from '@/store';
 
-export default {
+export default defineComponent({
     name: "CreateOrderPage",
     setup() {
         const concertDetails = ref(null);
@@ -152,16 +153,21 @@ export default {
             }, 0);
         };
 
+       let user = store.state.user;
+
         const createOrder = async () => {
             if (selectedSeatIds.value.length === 0) {
                 message.error("请选择至少一个座位！");
                 return;
             }
-
+            console.log(user.userId)
             try {
-                const response = await axios.post("/order/create", {
+                const response = await axios.post("/order/order/createOrder", {
+                    userId: user.userId,
                     concertId: concertDetails.value.concertId,
-                    seatIds: selectedSeatIds.value,  // 使用 seatIds 创建订单
+                    isSelected:1,
+                    seatNum:selectedSeatIds.value.length,
+                    seatIdList: selectedSeatIds.value,  // 使用 seatIdList 创建订单
                 });
 
                 if (response.data.code === 1) {
@@ -195,9 +201,10 @@ export default {
             selectSeat,
             createOrder,
             resetSelection,
+            user
         };
     },
-};
+});
 </script>
 
 <style scoped>

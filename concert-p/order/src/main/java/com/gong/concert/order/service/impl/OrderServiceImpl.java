@@ -128,7 +128,7 @@ public class OrderServiceImpl implements OrderService {
         Order orderDb = new Order();
         /*封装订单信息start*/
         orderDb.setOrderId(SnowUtil.getSnowflakeNextIdStr());
-        orderDb.setUserId(String.valueOf((short)1)); //先写死
+        orderDb.setUserId(String.valueOf(dto.getUserId())); //先写死
         orderDb.setConcertId(concertId);
         orderDb.setAddressBookId(null);
         orderDb.setPayStatus((short)0);
