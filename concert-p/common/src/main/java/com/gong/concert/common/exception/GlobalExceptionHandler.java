@@ -75,7 +75,22 @@ public class GlobalExceptionHandler {
         Result result = new Result();
         log.error("订单业务异常:", e.getDes());
         result.setCode(555);
-        result.setMsg(e.getDes());
+        result.setMsg("订单业务异常:"+e.getDes());
+        return result;
+    }
+
+    @ExceptionHandler(value = ConcertException.class)
+    @ResponseBody
+    public Result exceptionHandler(ConcertException e){
+        // LOG.info("seata全局事务ID: {}", RootContext.getXID());
+        // // 如果是在一次全局事务里出异常了，就不要包装返回值，将异常抛给调用方，让调用方回滚事务
+        // if (StrUtil.isNotBlank(RootContext.getXID())) {
+        //     throw e;
+        // }
+        Result result = new Result();
+        log.error("演唱会业务异常:", e.getDes());
+        result.setCode(555);
+        result.setMsg("演唱会业务异常:"+e.getDes());
         return result;
     }
 

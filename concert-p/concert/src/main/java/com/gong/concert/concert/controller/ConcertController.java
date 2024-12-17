@@ -4,6 +4,7 @@ import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.resp.Result;
 import com.gong.concert.concert.dto.QueryConcertByPageDTO;
 import com.gong.concert.concert.dto.SaveConcertDTO;
+import com.gong.concert.concert.dto.UpdateConcertDTO;
 import com.gong.concert.concert.entity.Concert;
 import com.gong.concert.concert.service.ConcertService;
 import com.gong.concert.concert.vo.ConcertVO;
@@ -106,5 +107,11 @@ public class ConcertController {
     @PutMapping("/updateStatus")
     public int updateStatus(@RequestParam String concertId,@RequestParam Short status){
         return concertService.updateStatus(concertId,status);
+    }
+
+    @PutMapping("/update")
+    public Result update(@RequestBody UpdateConcertDTO dto){
+        concertService.update(dto);
+        return Result.success();
     }
 }

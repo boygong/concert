@@ -7,11 +7,13 @@ import com.github.pagehelper.PageHelper;
 import com.gong.concert.common.enums.ConcertStatusEnum;
 import com.gong.concert.common.exception.BusinessException;
 import com.gong.concert.common.exception.BusinessExceptionEnum;
+import com.gong.concert.common.exception.ConcertException;
 import com.gong.concert.common.exception.OrderException;
 import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.util.SnowUtil;
 import com.gong.concert.concert.dto.QueryConcertByPageDTO;
 import com.gong.concert.concert.dto.SaveConcertDTO;
+import com.gong.concert.concert.dto.UpdateConcertDTO;
 import com.gong.concert.concert.entity.Concert;
 import com.gong.concert.concert.entity.Seat;
 import com.gong.concert.concert.entity.Theater;
@@ -207,6 +209,25 @@ public class ConcertServiceImpl implements ConcertService {
     @Override
     public int updateStatus(String concertId, Short status) {
         return concertMapper.updateStatus(concertId,status);
+    }
+
+    @Override
+    public void update(UpdateConcertDTO dto) {
+        log.info("进入更新演唱会Service层",dto);
+        String concertId = dto.getConcertId();
+        LocalDateTime beginTime = dto.getBeginTime();
+        if (concertId==null || concertId.equals("")){
+            throw new ConcertException("更新演唱会-concertId为空");
+        }
+        if (beginTime.isBefore(LocalDateTime.now())){
+            throw new ConcertException("更新演唱会-时间校验失败-"+beginTime);
+        }
+        Concert concert = new Concert();
+        BeanUtil.copyProperties(dto,concert);
+        int i = concertMapper.update(concert);
+        if (i==0){
+            throw new ConcertException("更新失败，更新行数为0");
+        }
     }
 
     private void generateSeats(Theater theater, String concertId) {

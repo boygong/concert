@@ -64,4 +64,17 @@
         </where>
     </select>
 
+    <update id="update">
+        update concert
+        <set>
+            <if test="name!=null and name != ''">name = #{name} ,</if>
+            <if test="photo!=null and  photo!= ''">photo = #{photo} ,</if>
+            <if test="lowPrice!=null">low_price = #{lowPrice} ,</if>
+            <if test="describe!=null and describe != ''">describe = #{describe} ,</if>
+            <if test="type!=null">type = #{type} ,</if>
+            <if test="player!=null and player!= ''">player = #{player} ,</if>
+            <if test="isSelected!=null">is_selected = #{isSelected}</if>
+            <if test="beginTime!=null and beginTime != ''">begin_time = #{beginTime} ,</if>
+        </set>
+    </update>
 </mapper>

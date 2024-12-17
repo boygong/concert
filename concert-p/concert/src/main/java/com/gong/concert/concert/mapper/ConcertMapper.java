@@ -16,4 +16,6 @@ public interface ConcertMapper {
 
     @Update("update concert set status = #{concertStatusEnum} where concert_id = #{concertId}")
     int updateStatus(String concertId, short concertStatusEnum);
+
+    int update(Concert concert);
 }
