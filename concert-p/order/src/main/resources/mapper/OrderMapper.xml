@@ -64,5 +64,6 @@
             <if test="payMethod != null">AND pay_method = #{payMethod}</if>
             <if test="orderStatus != null">AND order_status = #{orderStatus}</if>
         </where>
+        order by create_time desc
     </select>
 </mapper>

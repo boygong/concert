@@ -19,7 +19,7 @@
                     <a-radio value = '1' >不选择座位</a-radio>
                 </a-radio-group>
             </a-col>
-            购买：<a-input-number v-model:value="seatNum" :min="1" :max="10" :disabled="isSelectSeat.value == 0" />张
+            购买：<a-input-number v-model:value="seatNum" :min="1" :max="10" :disabled="isSelectSeat.value === 0" />张
         </a-row>
 
         <!-- 座位选择区域 -->
@@ -72,6 +72,8 @@ import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { message, notification } from 'ant-design-vue';
 import store from '@/store';
+import router from '@/router';
+
 
 export default defineComponent({
     name: "CreateOrderPage",
@@ -204,6 +206,9 @@ export default defineComponent({
                 const data = response.data;
                 if (response.data.code === 1) {
                     message.success("订单创建成功！");
+                    // 将返回的数据转为字符串
+                    const orderConfirmationData = JSON.stringify(data.data);
+                    router.push({ name: 'confirmOrder', params: { orderData: orderConfirmationData } });
                 } else {
                     notification.error({message:"订单创建失败:"+data.msg});
                 }

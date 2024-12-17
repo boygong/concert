@@ -211,6 +211,7 @@ public class OrderServiceImpl implements OrderService {
         orderDb.setOrderId(orderId);
         orderDb.setOrderStatus((short) 1);//已确认
         orderDb.setPayMethod(payMethod); //设置支付方式
+        orderDb.setPayStatus((short)1); //直接设置为已支付状态
         int i = orderMapper.update(orderDb);
         if (i != 1){
             throw new OrderException("确认订单失败");
