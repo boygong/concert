@@ -240,7 +240,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @GlobalTransactional
     public void cancelOrder(CancelOrderDTO dto) {
-        if (dto.getOrderId() ==null ||dto.getOrderId().equals("")){
+        if (dto.getOrderId() ==null || dto.getOrderId().isEmpty()){
             throw new OrderException("传入的订单号为空");
         }
         Order order = orderMapper.selectById(dto.getOrderId());
