@@ -30,6 +30,7 @@ public class QueryConcertByPageDTO {
     private String describe;//演唱会介绍
     private Short type;//演出类型 0演唱会 1英语会 ....
     private String player;//演出人员
+    private String createUser; //创建人
 
     private LocalDateTime beginTime;//演出开始时间
     private LocalDateTime endTime;//结束时间

@@ -162,6 +162,7 @@ import { defineComponent, reactive, ref } from 'vue';
 import axios from 'axios';
 import { notification } from 'ant-design-vue';
 import EditConcert from '@/components/EditConcert.vue';
+import store from '@/store';
 
 export default defineComponent({
     name: 'ConcertManagement',
@@ -192,6 +193,7 @@ export default defineComponent({
             pageSize: 5,
             total: 0
         });
+        let business = store.state.business;
         /***新增演唱会 */
         const isModalVisible = ref(false);
         const newConcert = reactive({
@@ -204,7 +206,7 @@ export default defineComponent({
             describe: '',
             beginTime: null,
             type: undefined,
-            isSelected: undefined
+            isSelected: undefined,
         });
 
         const uploadUrl = 'users/common/upload';
@@ -275,7 +277,10 @@ export default defineComponent({
         // 提交新增演唱会
         const addConcert = async () => {
             try {
-                const response = await axios.post('/concert/concert/save', newConcert);
+                const response = await axios.post('/concert/concert/save',{
+                    ...newConcert,
+                    createUser:business.username
+                } );
                 if (response.data.code === 1) {
                     notification.success({ message: '新增成功' });
                     fetchConcerts();
@@ -291,7 +296,6 @@ export default defineComponent({
         // const formatStatus = (status) => ['待审核', '待售', '售卖中', '停售', '售罄'][status] || '未知状态';
 
         // const formatDate = (date) => date ? new Date(date).toLocaleString() : '暂无';
-
 
         /***新增演唱会代码结束 */
 
@@ -311,7 +315,8 @@ export default defineComponent({
                     beginTime: filters.timeRange.length ? filters.timeRange[0].format('YYYY-MM-DDTHH:mm:ss') : '',
                     endTime: filters.timeRange.length ? filters.timeRange[1].format('YYYY-MM-DDTHH:mm:ss') : '',
                     lowFee: filters.lowFee || undefined,  // 传递最低票价
-                    highFee: filters.highFee || undefined  // 传递最高票价
+                    highFee: filters.highFee || undefined,  // 传递最高票价
+                    createUser: business.username
                 });
                 if (response.data.code === 1) {
                     concerts.value = response.data.data.records;
@@ -422,7 +427,8 @@ export default defineComponent({
             currentConcertId,
             isDrawerVisible,
             startConcert,
-            stopConcert
+            stopConcert,
+            business
         };
     }
 });

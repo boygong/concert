@@ -57,7 +57,7 @@
             <if test="type!=null">and type = #{type}</if>
             <if test="player!=null and player!=''">and `player` like concat('%',#{player},'%')</if>
             <if test="isSelected!=null">and is_selected = #{isSelected}</if>
-
+            <if test="createUser!=null and createUser != ''">create_user = #{createUser}</if>
             <!-- 演出时间约束 -->
             <if test="beginTime!=null">and begin_time &gt;= #{beginTime}</if>
             <if test="endTime!=null">and begin_time &lt;= #{endTime}</if>

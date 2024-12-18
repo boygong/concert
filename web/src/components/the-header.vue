@@ -10,27 +10,27 @@
         <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="horizontal" :style="{ lineHeight: '64px' }">
             <a-menu-item key="/welcome">
                 <router-link to="/welcome">
-                    <coffee-outlined/> &nbsp; 欢迎
+                    <coffee-outlined /> &nbsp; 欢迎
                 </router-link>
             </a-menu-item>
-            <a-menu-item key="/passenger">
-                <router-link to="/passenger">
-                    <user-outlined/> &nbsp; 商家管理
+            <a-menu-item :disabled="business.status === 1" key="/passenger">
+                <router-link :disabled="business.status === 1" to="/passenger">
+                    <user-outlined /> &nbsp; 商家管理
                 </router-link>
             </a-menu-item>
-            <a-menu-item key="/admin-user">
-                <router-link to="/admin-user">
-                    <user-outlined/> &nbsp; 用户管理
+            <a-menu-item :disabled="business.status === 1" key="/admin-user">
+                <router-link :disabled="business.status === 1" to="/admin-user">
+                    <user-outlined /> &nbsp; 用户管理
                 </router-link>
             </a-menu-item>
             <a-menu-item key="/concert">
                 <router-link to="/concert">
-                    <user-outlined/> &nbsp; 演唱会管理
+                    <user-outlined /> &nbsp; 演唱会管理
                 </router-link>
             </a-menu-item>
             <a-menu-item key="/order">
                 <router-link to="/order">
-                    <user-outlined/> &nbsp; 订单管理
+                    <user-outlined /> &nbsp; 订单管理
                 </router-link>
             </a-menu-item>
         </a-menu>
@@ -40,7 +40,7 @@
 
 <script>
 import store from '@/store';
-import { defineComponent, ref,watch } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import router from '@/router'
 
 export default defineComponent({
@@ -53,10 +53,10 @@ export default defineComponent({
             console.log('watch', newValue);
             selectedKeys.value = [];
             selectedKeys.value.push(newValue);
-        }, {immediate: true});
-        const remove =()=>{
+        }, { immediate: true });
+        const remove = () => {
             router.push("/login")
-            store.commit("setBusiness",{});
+            store.commit("setBusiness", {});
         }
         return {
             business,

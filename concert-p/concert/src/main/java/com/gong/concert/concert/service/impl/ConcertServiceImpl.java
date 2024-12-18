@@ -80,7 +80,7 @@ public class ConcertServiceImpl implements ConcertService {
         concert.setCreateTime(LocalDateTime.now());
         concert.setBeginTime(dto.getBeginTime());
 //        concert.setCreateUser(LoginBusinessContext.getUsername());
-        concert.setCreateUser("admin");//先写死
+        concert.setCreateUser(dto.getCreateUser());//先写死
         concert.setIsSelected(dto.getIsSelected());
 
         int i = concertMapper.insertConcert(concert);
@@ -97,6 +97,9 @@ public class ConcertServiceImpl implements ConcertService {
         log.info("演唱会分页查询进入Service层:{},{},{}",dto.getPage(),dto.getSize(),dto);
         //开始分页查询
         PageHelper.startPage(dto.getPage(), dto.getSize());
+        if (dto.getCreateUser().equals("admin")){
+            dto.setCreateUser(null); //管理员查询所有
+        }
         Page<Concert> page = concertMapper.pageQuery(dto);
         PageResult pageResult = new PageResult(page.getTotal(), page.getResult());
         return pageResult;

@@ -2,18 +2,18 @@
     <a-layout-sider width="200" style="background: #fff">
         <a-menu v-model:selectedKeys="selectedKeys2" v-model:openKeys="openKeys" mode="inline"
             :style="{ height: '100%', borderRight: 0 }">
-            <a-menu-item key="/welcome">
+            <a-menu-item  key="/welcome">
                 <router-link to="/welcome">
                     <coffee-outlined /> &nbsp; 欢迎
                 </router-link>
             </a-menu-item>
-            <a-menu-item key="/passenger">
-                <router-link to="/passenger">
+            <a-menu-item :disabled="business.status===1" key="/passenger">
+                <router-link :disabled="business.status===1" to="/passenger" >
                     <user-outlined /> &nbsp; 商家管理
                 </router-link>
             </a-menu-item>
-            <a-menu-item key="/admin-user">
-                <router-link to="/admin-user">
+            <a-menu-item :disabled="business.status===1" key="/admin-user">
+                <router-link :disabled="business.status===1" to="/admin-user">
                     <user-outlined/> &nbsp; 用户管理
                 </router-link>
             </a-menu-item>
@@ -33,6 +33,7 @@
 <script>
 import { defineComponent, ref, watch } from 'vue';
 import router from "@/router";
+import store from '@/store';
 
 
 export default defineComponent({
@@ -40,14 +41,15 @@ export default defineComponent({
     setup() {
         const selectedKeys = ref([]);
         // 监听当前路由，当当前的路由跳转时，更新the-header的启动标签
-
+        let business = store.state.business;
         watch(() => router.currentRoute.value.path, (newValue) => {
             console.log('watch', newValue);
             selectedKeys.value = [];
             selectedKeys.value.push(newValue);
         }, { immediate: true });
         return {
-            selectedKeys
+            selectedKeys,
+            business
         };
     },
 });
