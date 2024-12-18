@@ -27,6 +27,7 @@ public class OrderPageQueryDTO {
     private Short orderStatus;
     private Double lowAmount;   //最低价
     private Double highAmount;   //最高价
+    private String createUser; //创建演唱会商家
 
     private Integer page;
     private Integer size;

@@ -7,13 +7,13 @@
                     <coffee-outlined /> &nbsp; 欢迎
                 </router-link>
             </a-menu-item>
-            <a-menu-item :disabled="business.status===1" key="/passenger">
+            <a-menu-item :disabled="business.identity===1" key="/passenger">
                 <router-link :disabled="business.status===1" to="/passenger" >
                     <user-outlined /> &nbsp; 商家管理
                 </router-link>
             </a-menu-item>
-            <a-menu-item :disabled="business.status===1" key="/admin-user">
-                <router-link :disabled="business.status===1" to="/admin-user">
+            <a-menu-item :disabled="business.identity===1" key="/admin-user">
+                <router-link :disabled="business.identity===1" to="/admin-user">
                     <user-outlined/> &nbsp; 用户管理
                 </router-link>
             </a-menu-item>

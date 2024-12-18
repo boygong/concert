@@ -10,9 +10,12 @@ import com.gong.concert.common.exception.OrderException;
 import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.util.RedisLockUtil;
 import com.gong.concert.common.util.SnowUtil;
+import com.gong.concert.feign.clients.BusinessClient;
 import com.gong.concert.feign.clients.ConcertClient;
 import com.gong.concert.feign.clients.SeatClient;
+import com.gong.concert.feign.pojo.BusinessVO;
 import com.gong.concert.feign.pojo.Concert;
+import com.gong.concert.feign.pojo.Result;
 import com.gong.concert.feign.pojo.Seat;
 import com.gong.concert.order.dto.*;
 
@@ -56,6 +59,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private ConcertClient concertClient;
+    @Autowired
+    private BusinessClient businessClient;
 
 
     @Override
@@ -224,6 +229,13 @@ public class OrderServiceImpl implements OrderService {
         log.info("演唱会分页查询进入Service层:{},{},{}",dto.getPage(),dto.getSize(),dto);
         //开始分页查询
         PageHelper.startPage(dto.getPage(), dto.getSize());
+//        String businessName = dto.getCreateUser();  //商家用户名
+//        Result businessRsp = businessClient.getOne(businessName);
+//        BusinessVO data = (BusinessVO) businessRsp.getData();
+//        Short identity = data.getIdentity();
+//        if (identity == (short) 0){ //为管理员
+//            dto.setCreateUser(null);
+//        }
         Page<Order> page = orderMapper.select(dto);
         List<Order> orders = page.getResult();
         List<PageQueryVO> list = new ArrayList<>();
