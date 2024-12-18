@@ -11,6 +11,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @Author ToastFish
@@ -24,6 +25,7 @@ import org.springframework.core.env.Environment;
 @EnableFeignClients(basePackages = "com.gong.concert.feign.clients",defaultConfiguration = DefaultFeignConfiguration.class)
 @EnableAspectJAutoProxy
 @ComponentScan(basePackages = "com.gong")
+@EnableScheduling
 public class ConcertApplication {
     private static final Logger LOG = LoggerFactory.getLogger(ConcertApplication.class);
     public static void main(String[] args) {

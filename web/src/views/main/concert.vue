@@ -379,7 +379,8 @@ export default defineComponent({
                 0: '待售',
                 1: '售卖中',
                 2: '停售',
-                3: '售罄'
+                3: '售罄',
+                '-2': "审核失败"
             };
             return statusMap[status] || '未知状态';
         };
