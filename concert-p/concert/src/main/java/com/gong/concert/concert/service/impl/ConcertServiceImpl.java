@@ -11,6 +11,7 @@ import com.gong.concert.common.exception.ConcertException;
 import com.gong.concert.common.exception.OrderException;
 import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.util.SnowUtil;
+import com.gong.concert.concert.dto.AuditConcertDTO;
 import com.gong.concert.concert.dto.QueryConcertByPageDTO;
 import com.gong.concert.concert.dto.SaveConcertDTO;
 import com.gong.concert.concert.dto.UpdateConcertDTO;
@@ -231,6 +232,23 @@ public class ConcertServiceImpl implements ConcertService {
         if (i==0){
             throw new ConcertException("更新失败，更新行数为0");
         }
+    }
+
+    @Override
+    public void audit(AuditConcertDTO dto) {
+        if (dto.getConcertId() == null || dto.getConcertId().isEmpty()){
+            throw new ConcertException("审核演唱会-传入演唱会concertId为空");
+        }
+        if (dto.getPass()==null || dto.getPass().isEmpty()){
+            throw new ConcertException("审核演唱会-传入的审核结果为空");
+        }
+        log.info("开始调用数据库映射层");
+        short status = dto.getPass().equals("yes")? (short)0:(short)-2;
+        int i = concertMapper.updateStatus(dto.getConcertId(),status);
+        if (i==0){
+            throw new ConcertException("审核演唱会-审核异常，请联系统管理员");
+        }
+        log.info("审核成功-",dto.getPass());
     }
 
     private void generateSeats(Theater theater, String concertId) {

@@ -2,6 +2,7 @@ package com.gong.concert.concert.controller;
 
 import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.resp.Result;
+import com.gong.concert.concert.dto.AuditConcertDTO;
 import com.gong.concert.concert.dto.QueryConcertByPageDTO;
 import com.gong.concert.concert.dto.SaveConcertDTO;
 import com.gong.concert.concert.dto.UpdateConcertDTO;
@@ -113,5 +114,17 @@ public class ConcertController {
     public Result update(@RequestBody UpdateConcertDTO dto){
         concertService.update(dto);
         return Result.success();
+    }
+
+    /**
+     * @description: 审核演唱hi
+     * */
+    @PostMapping("/audit")
+    public Result audit(@RequestBody AuditConcertDTO  dto){
+        concertService.audit(dto);
+        Result result = new Result<>();
+        result.setCode(1);
+        result.setMsg("演唱会审核成功");
+        return result;
     }
 }

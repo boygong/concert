@@ -84,7 +84,7 @@
             <a-table-column title="操作">
                 <template #default="{ record }">
                     <!-- 编辑按钮 -->
-                    <a-button type="link" @click="openEditConcert(record.concertId)">编辑</a-button>
+                    <a-button type="primary" @click="openEditConcert(record.concertId)">编辑</a-button>
 
                     <!-- 停售按钮 -->
                     <a-button v-if="record.status === 1 || record.status === 3" type="primary" danger
@@ -99,8 +99,14 @@
                     </a-button>
 
                     <!-- 审核中按钮 -->
-                    <a-button v-if="record.status === -1" type="default" disabled>
+                    <a-button v-if="record.status === -1 && business.identity === 1" type="default" disabled>
                         审核中
+                    </a-button>
+
+                    <!-- 审核中按钮 -->
+                    <a-button v-if="record.status === -1 && business.identity === 0" type="primary"
+                        style="background-color: purple;" @click="showAuditModal(record)">
+                        审核
                     </a-button>
                 </template>
             </a-table-column>
@@ -152,8 +158,20 @@
     </div>
 
     <a-drawer v-model:visible="isDrawerVisible" title="编辑演唱会" :width="800" :destroy-on-close="true">
-        <EditConcert :concertId="currentConcertId" @closeDrawer="isDrawerVisible = false" />
+        <EditConcert :concertId:value="currentConcertId2" @closeDrawer="isDrawerVisible = false" />
     </a-drawer>
+
+    <!-- 审核弹窗 -->
+    <a-modal v-model:visible="isAuditModalVisible" title="审核演唱会" @ok="submitAudit" @cancel="cancelAudit">
+        <a-form :form="auditForm" layout="vertical">
+            <a-form-item label="审核结果" name="auditResult">
+                <a-radio-group v-model:value="auditFormValue">
+                    <a-radio value="yes">审核通过</a-radio>
+                    <a-radio value="no">审核不通过</a-radio>
+                </a-radio-group>
+            </a-form-item>
+        </a-form>
+    </a-modal>
 
 </template>
 
@@ -210,6 +228,10 @@ export default defineComponent({
         });
 
         const uploadUrl = 'users/common/upload';
+
+        const isAuditModalVisible = ref(false); // 是否显示审核弹窗
+        const auditFormValue = ref('yes'); // 审核表单选择的值
+        const currentConcertId2 = ref(null); // 当前审核演唱会的ID
 
         // 打开新增演唱会的 Modal
         const openAddConcertModal = () => {
@@ -277,10 +299,10 @@ export default defineComponent({
         // 提交新增演唱会
         const addConcert = async () => {
             try {
-                const response = await axios.post('/concert/concert/save',{
+                const response = await axios.post('/concert/concert/save', {
                     ...newConcert,
-                    createUser:business.username
-                } );
+                    createUser: business.username
+                });
                 if (response.data.code === 1) {
                     notification.success({ message: '新增成功' });
                     fetchConcerts();
@@ -402,6 +424,48 @@ export default defineComponent({
             }
         };
 
+        // 打开审核弹窗
+        const showAuditModal = (record) => {
+            currentConcertId2.value = record.concertId;
+            isAuditModalVisible.value = true;
+        };
+
+        // 提交审核
+        const submitAudit = async () => {
+            const params = {
+                concertId: currentConcertId2.value,
+                pass: auditFormValue.value, // 审核结果 yes 或 no
+            };
+
+            try {
+                const response = await axios.post('/concert/concert/audit', params);
+                console.log(response.data)
+                if (response.data.code === 1) {
+                    notification.success({
+                        message: '演唱会审核成功',
+                        description: '演唱会审核已成功处理。',
+                    });
+                    fetchConcerts(); // 刷新数据
+                    isAuditModalVisible.value = false; // 关闭弹窗
+                } else {
+                    notification.error({
+                        message: '审核失败',
+                        description: '演唱会审核失败，请稍后重试。',
+                    });
+                }
+            } catch (error) {
+                notification.error({
+                    message: '请求失败',
+                    description: error.message,
+                });
+            }
+        };
+
+        // 取消审核
+        const cancelAudit = () => {
+            this.isAuditModalVisible = false; // 关闭弹窗
+        };
+
         // 初始化加载
         fetchConcerts();
 
@@ -428,7 +492,13 @@ export default defineComponent({
             isDrawerVisible,
             startConcert,
             stopConcert,
-            business
+            business,
+            submitAudit,
+            showAuditModal,
+            cancelAudit,
+            isAuditModalVisible,
+            auditFormValue,
+            currentConcertId2
         };
     }
 });

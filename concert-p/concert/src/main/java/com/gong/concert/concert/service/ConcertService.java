@@ -1,6 +1,7 @@
 package com.gong.concert.concert.service;
 
 import com.gong.concert.common.resp.PageResult;
+import com.gong.concert.concert.dto.AuditConcertDTO;
 import com.gong.concert.concert.dto.QueryConcertByPageDTO;
 import com.gong.concert.concert.dto.SaveConcertDTO;
 import com.gong.concert.concert.dto.UpdateConcertDTO;
@@ -30,4 +31,6 @@ public interface ConcertService {
 
 
     void update(UpdateConcertDTO dto);
+
+    void audit(AuditConcertDTO dto);
 }
