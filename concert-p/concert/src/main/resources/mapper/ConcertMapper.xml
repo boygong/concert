@@ -62,7 +62,36 @@
             <if test="beginTime!=null">and begin_time &gt;= #{beginTime}</if>
             <if test="endTime!=null">and begin_time &lt;= #{endTime}</if>
         </where>
+        order by begin_time asc
     </select>
+
+    <select id="pageQueryForUser" resultType="com.gong.concert.concert.entity.Concert">
+        select * from concert
+        <where>
+            <if test="concertId!=null and concertId!=''">and concert_id = #{concertId}</if>
+            <if test="theaterId!=null and theaterId!=''">and theater_id = #{theaterId}</if>
+            <if test="name!=null and name!=''">and name like concat('%',#{name},'%')</if>
+            <if test="lowFee!=null and lowFee!=''">and low_price &gt;= #{lowFee}</if>
+            <if test="highFee!=null and highFee!=''">and low_price &lt;= #{highFee}</if>
+            <if test="status!=null">and status = #{status}</if>
+            <if test="location!=null and location!=''">and location like concat('%',#{location},'%')</if>
+            <if test="describe!=null and describe!=''">and `describe` like concat('%',#{describe},'%')</if>
+            <if test="type!=null">and type = #{type}</if>
+            <if test="player!=null and player!=''">and `player` like concat('%',#{player},'%')</if>
+            <if test="isSelected!=null">and is_selected = #{isSelected}</if>
+            <if test="createUser!=null and createUser != ''">create_user = #{createUser}</if>
+            <!-- 演出时间约束 -->
+            <if test="beginTime!=null">and begin_time &gt;= #{beginTime}</if>
+            <if test="endTime!=null">and begin_time &lt;= #{endTime}</if>
+            <!-- 过滤掉审核失败和待审核的演唱会，确保正在售卖和待售的演唱会排在前面 -->
+            and status != -2 and status != -1
+        </where>
+        <!-- 排序：售卖中（1）和待售（0）的演唱会排在前面，其余状态按时间排序 -->
+        order by case when status = 1 then 0
+        when status = 0 then 1
+        else 2 end, begin_time asc
+    </select>
+
 
     <update id="update">
         update concert

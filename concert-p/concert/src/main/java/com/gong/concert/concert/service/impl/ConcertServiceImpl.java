@@ -16,6 +16,7 @@ import com.gong.concert.concert.dto.QueryConcertByPageDTO;
 import com.gong.concert.concert.dto.SaveConcertDTO;
 import com.gong.concert.concert.dto.UpdateConcertDTO;
 import com.gong.concert.concert.entity.Concert;
+import com.gong.concert.concert.entity.Concert2;
 import com.gong.concert.concert.entity.Seat;
 import com.gong.concert.concert.entity.Theater;
 import com.gong.concert.concert.mapper.ConcertMapper;
@@ -29,7 +30,6 @@ import com.gong.concert.feign.pojo.RejectOrderBatchDTO;
 import com.gong.concert.feign.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -111,7 +111,7 @@ public class ConcertServiceImpl implements ConcertService {
         log.info("用户演唱会分页查询进入Service层:{},{},{}",dto.getPage(),dto.getSize(),dto);
         //开始分页查询
         PageHelper.startPage(dto.getPage(), dto.getSize());
-        Page<Concert> page = concertMapper.pageQuery(dto);
+        Page<Concert> page = concertMapper.pageQueryForUser(dto);
         List<Concert> concertList = page.getResult();
         List<ConcertForUser> vo = new ArrayList<>();
         for (Concert concert : concertList) {
@@ -201,13 +201,15 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     @Override
-    public Concert getByIdFeign(String concertId) {
+    public Concert2 getByIdFeign(String concertId) {
         log.info("演唱会查单个进入Feign - Service层:{}",concertId);
         QueryConcertByPageDTO dto = new QueryConcertByPageDTO();//省力只想写一个sql了
         dto.setConcertId(concertId);
         Page<Concert> concerts = concertMapper.pageQuery(dto);//查出演唱会信息
         Concert concert = concerts.get(0);
-        return concert;
+        Concert2 concert2 = new Concert2();
+        BeanUtil.copyProperties(concert,concert2);
+        return concert2;
     }
 
     @Override

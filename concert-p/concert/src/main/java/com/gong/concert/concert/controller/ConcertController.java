@@ -6,7 +6,7 @@ import com.gong.concert.concert.dto.AuditConcertDTO;
 import com.gong.concert.concert.dto.QueryConcertByPageDTO;
 import com.gong.concert.concert.dto.SaveConcertDTO;
 import com.gong.concert.concert.dto.UpdateConcertDTO;
-import com.gong.concert.concert.entity.Concert;
+import com.gong.concert.concert.entity.Concert2;
 import com.gong.concert.concert.service.ConcertService;
 import com.gong.concert.concert.vo.ConcertVO;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +50,7 @@ public class ConcertController {
      * @return: com.gong.concert.common.resp.Result
     */
     @PostMapping("/pageQuery")
-    @Cacheable(value = "concerts", key = "#dto.hashCode().toString()")
+   //@Cacheable(value = "concerts", key = "#dto.hashCode().toString()")
     public Result pageQuery(@RequestBody QueryConcertByPageDTO dto) {
         PageResult pageResult = concertService.pageQuery(dto);
         return Result.success(pageResult);
@@ -83,7 +83,7 @@ public class ConcertController {
      * @return: com.gong.concert.common.resp.Result<com.gong.concert.concert.vo.ConcertVO>
      */
     @GetMapping("/getByIdFeign")
-    public Concert getByIdFeign(@RequestParam String concertId){
+    public Concert2 getByIdFeign(@RequestParam String concertId){
         return concertService.getByIdFeign(concertId);
     }
     /**

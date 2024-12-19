@@ -16,6 +16,8 @@ public interface ConcertMapper {
 
     Page<Concert> pageQuery(QueryConcertByPageDTO dto);
 
+    Page<Concert> pageQueryForUser(QueryConcertByPageDTO dto);
+
     @Update("update concert set status = #{concertStatusEnum} where concert_id = #{concertId}")
     int updateStatus(String concertId, short concertStatusEnum);
 

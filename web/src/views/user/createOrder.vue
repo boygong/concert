@@ -14,16 +14,17 @@
         <!-- 是否选座单选框 -->
         <a-row>
             <a-col :span="24">
-                <a-radio-group v-model:value="isSelectSeat"  :disabled="concertDetails.isSelected === 1">
-                    <a-radio value = '0' >选择座位</a-radio>
-                    <a-radio value = '1' >不选择座位</a-radio>
+                <a-radio-group v-model:value="isSelectSeat" :disabled="isSeatSelectionDisabled">
+                    <a-radio value='0'>选择座位</a-radio>
+                    <a-radio value='1'>不选择座位</a-radio>
                 </a-radio-group>
             </a-col>
-            购买：<a-input-number v-model:value="seatNum" :min="1" :max="10" :disabled="isSelectSeat.value === 0" />张
+            购买：<a-input-number v-model:value="seatNum" :min="1" :max="10" :disabled="isSelectSeat.value === 0 || isSeatSelectionDisabled" />
+            张
         </a-row>
 
         <!-- 座位选择区域 -->
-        <div class="seat-selection">
+        <div class="seat-selection" v-if="!isSeatSelectionDisabled">
             <h2>座位选择</h2>
             <div class="seat-map">
                 <div class="seat-row" v-for="row in seatRows" :key="row">
@@ -54,9 +55,6 @@
         <a-button @click="resetSelection" class="reset-button">
             重置选择
         </a-button>
-        <a-button @click="console2">
-            调试
-        </a-button>
 
         <!-- 备注输入框 -->
         <div class="remark-section">
@@ -74,7 +72,6 @@ import { message, notification } from 'ant-design-vue';
 import store from '@/store';
 import router from '@/router';
 
-
 export default defineComponent({
     name: "CreateOrderPage",
     setup() {
@@ -88,6 +85,7 @@ export default defineComponent({
         const remark = ref("");
         const isSelectSeat = ref(0);  // 默认选择座位
         const seatNum = ref(0);  // 选择座位数
+        const isSeatSelectionDisabled = ref(false); // 控制座位选择是否禁用
 
         const route = useRoute();
         const concertId = route.params.concertId;
@@ -98,6 +96,11 @@ export default defineComponent({
                 const data = response.data.data;
                 concertDetails.value = data;
                 seatList.value = data.seatList;
+
+                // 根据演唱会状态决定是否禁用选座
+                if (data.status === 2 || data.status === 3) {
+                    isSeatSelectionDisabled.value = true; // 如果是停售或售罄，禁用选座
+                }
 
                 const rows = Math.max(...seatList.value.map(seat => seat.seatRow));
                 const cols = Math.max(...seatList.value.map(seat => seat.seatCol));
@@ -143,8 +146,8 @@ export default defineComponent({
         };
 
         const selectSeat = (row, col) => {
-            if (concertDetails.value.isSelected === 1) {
-                message.warning("该演唱会无法选择座位！");
+            if (isSeatSelectionDisabled.value) {
+                message.warning("该演唱会已停售或售罄，无法选择座位！");
                 return;
             }
 
@@ -181,11 +184,11 @@ export default defineComponent({
 
         const createOrder = async () => {
             let num = 0;
-            console.log(isSelectSeat.value==1);
-            
-            if(isSelectSeat.value==1){
+            console.log(isSelectSeat.value == 1);
+
+            if (isSelectSeat.value == 1) {
                 num = seatNum.value;
-            }else{
+            } else {
                 num = selectedSeatIds.value.length;
             }
             const orderData = {
@@ -193,7 +196,7 @@ export default defineComponent({
                 concertId: concertDetails.value.concertId,
                 isSelected: isSelectSeat.value,
                 seatNum: num,
-                seatIdList:selectedSeatIds.value,
+                seatIdList: selectedSeatIds.value,
                 remark: remark.value
             };
 
@@ -210,7 +213,7 @@ export default defineComponent({
                     const orderConfirmationData = JSON.stringify(data.data);
                     router.push({ name: 'confirmOrder', params: { orderData: orderConfirmationData } });
                 } else {
-                    notification.error({message:"订单创建失败:"+data.msg});
+                    notification.error({ message: "订单创建失败:" + data.msg });
                 }
             } catch (error) {
                 message.error(`创建订单失败: ${error.message}`);
@@ -223,11 +226,6 @@ export default defineComponent({
             totalPrice.value = 0;
         };
 
-        const console2=()=>{
-            console.log(isSelectSeat.value);
-            console.log(concertDetails.value.isSelected);
-        }
-
         return {
             concertDetails,
             seatList,
@@ -239,22 +237,17 @@ export default defineComponent({
             remark,
             isSelectSeat,
             seatNum,
+            isSeatSelectionDisabled,
             getSeatClass,
             getSeatLabel,
             selectSeat,
             updateTotalPrice,
             createOrder,
-            resetSelection,
-            console2
+            resetSelection
         };
     },
 });
 </script>
-
-
-
-
-
 
 <style scoped>
 .create-order-page {
@@ -297,19 +290,6 @@ export default defineComponent({
     font-size: 12px;
 }
 
-.seat {
-    width: 40px;
-    height: 40px;
-    margin: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: background-color 0.3s;
-}
-
 .seat.available {
     background-color: green;
     color: white;
@@ -335,5 +315,4 @@ export default defineComponent({
     color: white;
     border: 2px solid blue;
 }
-
 </style>

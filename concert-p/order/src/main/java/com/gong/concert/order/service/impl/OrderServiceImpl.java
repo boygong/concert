@@ -13,12 +13,9 @@ import com.gong.concert.common.util.SnowUtil;
 import com.gong.concert.feign.clients.BusinessClient;
 import com.gong.concert.feign.clients.ConcertClient;
 import com.gong.concert.feign.clients.SeatClient;
-import com.gong.concert.feign.pojo.BusinessVO;
-import com.gong.concert.feign.pojo.Concert;
-import com.gong.concert.feign.pojo.Result;
+import com.gong.concert.feign.pojo.Concert2;
 import com.gong.concert.feign.pojo.Seat;
 import com.gong.concert.order.dto.*;
-
 import com.gong.concert.order.entity.Order;
 import com.gong.concert.order.entity.OrderDetail;
 import com.gong.concert.order.mapper.OrderDetailMapper;
@@ -32,7 +29,6 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -80,7 +76,8 @@ public class OrderServiceImpl implements OrderService {
         if (concertId==null || concertId==""){
             throw new BusinessException(BusinessExceptionEnum.CONCERTID_IS_NULL);
         }
-        Concert concert = concertClient.getByIdFeign(concertId);
+        log.info("OpenFeign获取演唱会信息:{}",concertClient.getByIdFeign(concertId));
+        Concert2 concert = concertClient.getByIdFeign(concertId);
         log.info("调用feign获取到的演唱会信息:{}",concert);
         if (concert.getStatus()!=(short)1){
             throw new OrderException("演唱会状态异常无法预约");

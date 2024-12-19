@@ -1,22 +1,22 @@
 package com.gong.concert.feign.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * @Author ToastFish
  * @Time 2024/11/13
- * 演唱会实体类
+ * 演唱会实体类(非序列化)
  */
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Concert implements Serializable {
+public class Concert2 {
     private String concertId; //演唱会id
     private String theaterId;//关联影厅id
     private String name;//演唱会名称
@@ -28,8 +28,11 @@ public class Concert implements Serializable {
     private Integer number;//演唱会座位数
     private Short type;//演出类型 0演唱会 1英语会 ....
     private String player;//演出人员
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime createTime;//创建时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime updateTime;//更新时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime beginTime;//演出开始时间
     private String createUser;//创建人
     private String updateUser;//更新人

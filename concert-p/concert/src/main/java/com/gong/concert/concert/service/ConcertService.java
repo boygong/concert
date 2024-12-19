@@ -5,7 +5,7 @@ import com.gong.concert.concert.dto.AuditConcertDTO;
 import com.gong.concert.concert.dto.QueryConcertByPageDTO;
 import com.gong.concert.concert.dto.SaveConcertDTO;
 import com.gong.concert.concert.dto.UpdateConcertDTO;
-import com.gong.concert.concert.entity.Concert;
+import com.gong.concert.concert.entity.Concert2;
 import com.gong.concert.concert.vo.ConcertVO;
 
 /**
@@ -25,7 +25,7 @@ public interface ConcertService {
 
     int startSale(String concertId);
 
-    Concert getByIdFeign(String concertId);
+    Concert2 getByIdFeign(String concertId);
 
     int updateStatus(String concertId, Short status);
 
