@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author ToastFish
@@ -20,7 +21,7 @@ import java.util.List;
 public class testRedis {
 
     @Autowired
-    private RedisTemplate<String,String> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
     @Autowired
     private SeatMapper seatMapper;
     @Autowired
@@ -29,8 +30,8 @@ public class testRedis {
 
     @Test
     public void testRedisConnection() {
-        redisTemplate.opsForValue().set("test", "Hello Redis!");
-        String value = redisTemplate.opsForValue().get("test");
+        redisTemplate.opsForValue().set("test",  "Hello Redis!");
+        String value = redisTemplate.opsForValue().get("test").toString();
         System.out.println(value);  // 应该输出 "Hello Redis!"
     }
 

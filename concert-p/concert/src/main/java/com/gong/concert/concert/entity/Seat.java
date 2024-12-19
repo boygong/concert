@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * @Author ToastFish
  * @Time 2024/11/13
@@ -13,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Seat {
+public class Seat implements Serializable {
     private Integer id;//数据库id，自增
     private String seatId;//座位id
     private String concertId; //关联演唱会id

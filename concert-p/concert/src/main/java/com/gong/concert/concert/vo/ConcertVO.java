@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ConcertVO {
+public class ConcertVO implements Serializable {
     private String concertId; //演唱会id
     private String theaterId;//关联影厅id
     private String name;//演唱会名称
@@ -30,7 +31,9 @@ public class ConcertVO {
     private Integer number;//演唱会座位数
     private Short type;//演出类型 0演唱会 1英语会 ....
     private String player;//演出人员
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime createTime;//创建时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime updateTime;//更新时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime beginTime;//演出开始时间

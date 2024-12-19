@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping
 public class HelloController {
     @Autowired
-    private RedisTemplate<String,String> redisTemplate;
+    private RedisTemplate<String,Object> redisTemplate;
     @GetMapping("/hello")
     public String hello() {
         return "Hello Concert!";
@@ -23,7 +23,7 @@ public class HelloController {
     @GetMapping("/redis")
     public String redis(){
         redisTemplate.opsForValue().set("test", "Hello Redis!");
-        String value = redisTemplate.opsForValue().get("test");
+        String value = (String) redisTemplate.opsForValue().get("test");
         System.out.println(value);  // 应该输出 "Hello Redis!"
         return value;
     }

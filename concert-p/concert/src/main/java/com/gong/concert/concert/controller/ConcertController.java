@@ -49,32 +49,34 @@ public class ConcertController {
      * @return: com.gong.concert.common.resp.Result
     */
     @PostMapping("/pageQuery")
-    @Cacheable(value = "concerts", key = "#dto.hashCode()")
+    @Cacheable(value = "concerts", key = "#dto.hashCode().toString()")
     public Result pageQuery(@RequestBody QueryConcertByPageDTO dto) {
         PageResult pageResult = concertService.pageQuery(dto);
         return Result.success(pageResult);
     }
 
     @PostMapping("/pageQueryUser")
+    @Cacheable(value = "concerts", key = "#dto.hashCode().toString()")
     public Result pageQueryUser(@RequestBody QueryConcertByPageDTO dto){
         PageResult pageResult = concertService.pageQueryUser(dto);
         return Result.success(pageResult);
     }
 
     /**
-     * @description:根据演唱会id查询演唱会
+     * @description: 根据演唱会id查询演唱会
      * @author: gongyuankang
      * @date: 2024/11/19 0:25
      * @return: com.gong.concert.common.resp.Result<com.gong.concert.concert.vo.ConcertVO>
     */
     @GetMapping("/getById")
+    @Cacheable(value = "concertById",key = "#concertId")
     public Result<ConcertVO> getById(@RequestParam String concertId){
         ConcertVO vo = concertService.getById(concertId);
         return Result.success(vo);
     }
 
     /**
-     * @description:根据演唱会id查询演唱会
+     * @description: 根据演唱会id查询演唱会
      * @author: gongyuankang
      * @date: 2024/11/19 0:25
      * @return: com.gong.concert.common.resp.Result<com.gong.concert.concert.vo.ConcertVO>

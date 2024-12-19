@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisLockUtil {
 
     @Autowired
-    private  RedisTemplate<String, String> redisTemplate;
+    private  RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 获取分布式锁

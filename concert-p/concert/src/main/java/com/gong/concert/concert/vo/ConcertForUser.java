@@ -1,10 +1,12 @@
 package com.gong.concert.concert.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.checkerframework.checker.units.qual.A;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConcertForUser {
+public class ConcertForUser implements Serializable {
     private String concertId; //演唱会id
     private String theaterId;//关联影厅id
     private String name;//演唱会名称
@@ -27,8 +29,11 @@ public class ConcertForUser {
     private Integer number;//演唱会座位数
     private Short type;//演出类型 0演唱会 1英语会 ....
     private String player;//演出人员
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime createTime;//创建时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime updateTime;//更新时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime beginTime;//演出开始时间
     private String createUser;//创建人
     private String updateUser;//更新人

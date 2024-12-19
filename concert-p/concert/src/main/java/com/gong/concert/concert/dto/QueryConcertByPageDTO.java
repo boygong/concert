@@ -53,7 +53,9 @@ public class QueryConcertByPageDTO {
                 createUser,
                 beginTime,
                 endTime,
-                isSelected
+                isSelected,
+                size,
+                page
         );
     }
 }

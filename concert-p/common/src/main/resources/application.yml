@@ -25,7 +25,6 @@ spring:
       timeout: 5000
       database: 0
       port: 15112
-
 #spring:
 #  data:
 #    redis:
@@ -35,6 +34,14 @@ spring:
 #      timeout: 5000
 #      database: 0
 #      port: 15112
-
-
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          redis:
+            core:
+              RedisTemplate: DEBUG
+            cache:
+              RedisCacheManager: DEBUG
 
