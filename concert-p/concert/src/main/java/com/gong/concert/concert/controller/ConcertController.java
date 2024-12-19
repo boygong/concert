@@ -1,5 +1,6 @@
 package com.gong.concert.concert.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.gong.concert.common.resp.PageResult;
 import com.gong.concert.common.resp.Result;
 import com.gong.concert.concert.dto.AuditConcertDTO;
@@ -57,6 +58,7 @@ public class ConcertController {
     }
 
     @PostMapping("/pageQueryUser")
+    @SentinelResource(value = "concertPageQuery")
 //    @Cacheable(value = "concertCache", key = "#dto.hashCode().toString()")
     public Result pageQueryUser(@RequestBody QueryConcertByPageDTO dto){
         PageResult pageResult = concertService.pageQueryUser(dto);
