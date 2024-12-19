@@ -11,6 +11,7 @@ import com.gong.concert.concert.service.ConcertService;
 import com.gong.concert.concert.vo.ConcertVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,7 +57,7 @@ public class ConcertController {
     }
 
     @PostMapping("/pageQueryUser")
-    @Cacheable(value = "concerts", key = "#dto.hashCode().toString()")
+//    @Cacheable(value = "concertCache", key = "#dto.hashCode().toString()")
     public Result pageQueryUser(@RequestBody QueryConcertByPageDTO dto){
         PageResult pageResult = concertService.pageQueryUser(dto);
         return Result.success(pageResult);
@@ -69,7 +70,7 @@ public class ConcertController {
      * @return: com.gong.concert.common.resp.Result<com.gong.concert.concert.vo.ConcertVO>
     */
     @GetMapping("/getById")
-    @Cacheable(value = "concertById",key = "#concertId")
+    @Cacheable(value = "concertCache",key = "#concertId")
     public Result<ConcertVO> getById(@RequestParam String concertId){
         ConcertVO vo = concertService.getById(concertId);
         return Result.success(vo);
@@ -92,6 +93,7 @@ public class ConcertController {
      * @return: com.gong.concert.common.resp.Result
     */
     @PutMapping("/stop")
+    @CacheEvict(value = "concertCache",key = "#concertId")
     public Result stopSale(@RequestParam String concertId){
         int i = concertService.stopSale(concertId);
         return i==1? Result.success():Result.error("停售失败");
@@ -104,17 +106,20 @@ public class ConcertController {
      * @return: com.gong.concert.common.resp.Result
     */
     @PutMapping("/start")
+    @CacheEvict(value = "concertCache",key = "#concertId")
     public Result startSale(@RequestParam String concertId){
         int i = concertService.startSale(concertId);
         return i==1? Result.success():Result.error("启售失败");
     }
 
     @PutMapping("/updateStatus")
+    @CacheEvict(value = "concertCache",key = "#concertId")
     public int updateStatus(@RequestParam String concertId,@RequestParam Short status){
         return concertService.updateStatus(concertId,status);
     }
 
     @PutMapping("/update")
+    @CacheEvict(value = "concertCache",key = "#dto.concertId")
     public Result update(@RequestBody UpdateConcertDTO dto){
         concertService.update(dto);
         return Result.success();
@@ -124,6 +129,7 @@ public class ConcertController {
      * @description: 审核演唱hi
      * */
     @PostMapping("/audit")
+    @CacheEvict(value = "concertCache",key = "#dto.concertId")
     public Result audit(@RequestBody AuditConcertDTO  dto){
         concertService.audit(dto);
         Result result = new Result<>();
