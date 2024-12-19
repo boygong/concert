@@ -1,5 +1,6 @@
 package com.gong.concert.feign.pojo;
 
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;

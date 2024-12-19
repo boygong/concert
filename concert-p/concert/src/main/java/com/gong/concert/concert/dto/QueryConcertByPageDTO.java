@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * @Author ToastFish
@@ -36,4 +37,23 @@ public class QueryConcertByPageDTO {
     private LocalDateTime endTime;//结束时间
     private Short isSelected;//是否可以选座，0可选座位 1不可选 2可选等级座位
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                concertId,
+                theaterId,
+                name,
+                highFee,
+                lowFee,
+                status,
+                location,
+                describe,
+                type,
+                player,
+                createUser,
+                beginTime,
+                endTime,
+                isSelected
+        );
+    }
 }

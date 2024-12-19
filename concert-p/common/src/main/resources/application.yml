@@ -15,7 +15,7 @@ open-feign:
   order:
     api-url: http://127.0.0.1:28004
   business:
-    business: http://127.0.0.1:28002
+    api-url: http://127.0.0.1:28002
 
 spring:
   data:

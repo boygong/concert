@@ -11,6 +11,7 @@ import com.gong.concert.concert.service.ConcertService;
 import com.gong.concert.concert.vo.ConcertVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -48,7 +49,8 @@ public class ConcertController {
      * @return: com.gong.concert.common.resp.Result
     */
     @PostMapping("/pageQuery")
-    public Result pageQuery(@RequestBody QueryConcertByPageDTO dto){
+    @Cacheable(value = "concerts", key = "#dto.hashCode()")
+    public Result pageQuery(@RequestBody QueryConcertByPageDTO dto) {
         PageResult pageResult = concertService.pageQuery(dto);
         return Result.success(pageResult);
     }
