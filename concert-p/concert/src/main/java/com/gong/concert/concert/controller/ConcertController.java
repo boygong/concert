@@ -73,6 +73,7 @@ public class ConcertController {
     */
     @GetMapping("/getById")
     @Cacheable(value = "concertCache",key = "#concertId")
+    @SentinelResource(value = "concertGetById")
     public Result<ConcertVO> getById(@RequestParam String concertId){
         ConcertVO vo = concertService.getById(concertId);
         return Result.success(vo);

@@ -73,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
         if (userId ==null || userId.equals("")){
             throw new BusinessException(BusinessExceptionEnum.USERID_IS_NULL);
         }
-        if (concertId==null || concertId==""){
+        if (concertId==null || concertId.equals("")){
             throw new BusinessException(BusinessExceptionEnum.CONCERTID_IS_NULL);
         }
         log.info("OpenFeign获取演唱会信息:{}",concertClient.getByIdFeign(concertId));
@@ -85,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
         List<Seat> seatList = new ArrayList<>();
 
         if (isSelected == 0){  //可选座位
-            if (seatIdList.size()==0||seatIdList==null||seatNum==0){ //座位数为空
+            if (seatIdList.isEmpty() || seatNum == 0){ //座位数为空
                 throw new BusinessException(BusinessExceptionEnum.SEATNUM_IS_NULL);
             }
             if (seatIdList.size()!=seatNum){  //座位列表与座位数不一致
@@ -118,6 +118,10 @@ public class OrderServiceImpl implements OrderService {
             log.info("执行Redis加锁操作");
             if (!lockAcquired) {
                 throw new OrderException("座位 " + seat.getSeatId() + " 正在处理中，请稍后再试");
+            }
+            Short seatStatus = seatClient.getById(seat.getSeatId()).getSeatStatus();
+            if (isSelected==0 && seatStatus != (short) 0){ //加锁后再次查询并判断座位状态，方式上一个请求购完票之后，新线程抢到锁导致超卖
+                throw new OrderException("创建订单失败-你所选座位已售出");
             }
             boolean flag = seatClient.updateStatus(seat,(short)5); //设置座位状态为待支付
             if (flag==false){
