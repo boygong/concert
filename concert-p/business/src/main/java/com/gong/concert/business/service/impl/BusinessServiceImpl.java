@@ -8,7 +8,6 @@ import com.gong.concert.business.mapper.BusinessMapper;
 import com.gong.concert.business.service.BusinessService;
 import com.gong.concert.business.vo.BusinessLoginVO;
 import com.gong.concert.business.vo.BusinessVO;
-import com.gong.concert.common.context.LoginBusinessContext;
 import com.gong.concert.common.exception.BusinessException;
 import com.gong.concert.common.exception.BusinessExceptionEnum;
 import com.gong.concert.common.util.JwtUtil;
@@ -125,9 +124,9 @@ public class BusinessServiceImpl implements BusinessService {
     public void update(Business business) {
         log.info("商家修改Service层,开始数据校验");
         String username = business.getUsername();
-        if (username.equals(LoginBusinessContext.getUsername())) {
-            throw new BusinessException(BusinessExceptionEnum.Not_MODIFY_YOURSELF);
-        }
+//        if (username.equals(LoginBusinessContext.getUsername())) {
+//            throw new BusinessException(BusinessExceptionEnum.Not_MODIFY_YOURSELF);
+//        }
         Business toDB = new Business();
         toDB.setUsername(username);
         Business businessDB = businessMapper.selectByExample(toDB); //通过用户名获取商家
@@ -147,8 +146,8 @@ public class BusinessServiceImpl implements BusinessService {
         }
 
         business.setUpdateTime(LocalDateTime.now());
-//        business.setUpdateUser("admin"); //先写死
-        business.setUpdateUser(LoginBusinessContext.getUsername());
+        business.setUpdateUser("admin"); //先写死
+//        business.setUpdateUser(LoginBusinessContext.getUsername());
         int i = businessMapper.updateBusiness(business);
         if (i != 1) {
             throw new BusinessException(BusinessExceptionEnum.BUSINESS_UPDATE_ERROR);

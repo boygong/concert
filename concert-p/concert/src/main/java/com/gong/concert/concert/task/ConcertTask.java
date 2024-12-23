@@ -4,7 +4,6 @@ package com.gong.concert.concert.task;
 import cn.hutool.core.date.DateUtil;
 import com.gong.concert.concert.mapper.ConcertMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -24,7 +23,7 @@ public class ConcertTask {
     /**
     * @description: 调度任务:每5分钟开启待售状态下的演唱会
     * */
-    @Scheduled(cron = "0 */5 * * * *")
+    @Scheduled(cron = "0 */1 * * * *")
     public void startConcertTask(){
         log.info("------调度任务:开启待售状态下的演唱会 开始执行------");
         long current = DateUtil.current();
@@ -37,7 +36,7 @@ public class ConcertTask {
     /**
      * @description: 调度任务:每5分钟停止在售、售罄状态下的演唱会
      * */
-    @Scheduled(cron = "0 */5 * * * *")
+    @Scheduled(cron = "0 */1 * * * *")
 //    @Scheduled(cron = "0/5 * * * * ?")
     public void endConcertTask(){
         log.info("------调度任务:停止在售、售罄状态下的演唱会 开始执行------");

@@ -90,7 +90,7 @@ public class ConcertServiceImpl implements ConcertService {
         String concertId = concert.getConcertId();
 
         // 根据展厅的行数和列数生成座位，并插入到 seats 表
-        generateSeats(theater, concertId);
+        generateSeats(theater, concertId,dto.getLowPrice());
     }
 
     @Override
@@ -253,7 +253,7 @@ public class ConcertServiceImpl implements ConcertService {
         log.info("审核成功-",dto.getPass());
     }
 
-    private void generateSeats(Theater theater, String concertId) {
+    private void generateSeats(Theater theater, String concertId,Double fee) {
         for (int row = 1; row <= theater.getRow(); row++) {
             for (int col = 1; col <= theater.getCol(); col++) {
                 Seat seat = new Seat();
@@ -264,7 +264,7 @@ public class ConcertServiceImpl implements ConcertService {
                 seat.setSeatCol(col);
                 //seat.setSeatNumber("R" + row + "C" + col); // 座位编号
                 seat.setSeatStatus((short)0); // 初始状态为可售
-                seat.setFee((double)100); // 可以根据需要设置不同的票价
+                seat.setFee(fee);
                 log.info("本次插入座位信息:{}",seat);
                 seatMapper.insertSeat(seat);
             }

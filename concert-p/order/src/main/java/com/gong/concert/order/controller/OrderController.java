@@ -8,6 +8,7 @@ import com.gong.concert.order.service.OrderService;
 import com.gong.concert.order.vo.CreateOrderVO;
 import com.gong.concert.order.vo.OrderDetailVO;
 import jakarta.annotation.Resource;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -28,6 +29,7 @@ public class OrderController {
      * @return: com.gong.concert.common.resp.Result
      */
     @PostMapping("/createOrder")
+    @CacheEvict(value = "concertCache",key = "#dto.concertId")
     public Result createOrder(@RequestBody CreateOrderDTO dto) {
         CreateOrderVO vo = orderService.createOrder(dto);
         return Result.success(vo);
