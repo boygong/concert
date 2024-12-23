@@ -255,11 +255,11 @@ public class OrderServiceImpl implements OrderService {
     @GlobalTransactional
     public void cancelOrder(CancelOrderDTO dto) {
         if (dto.getOrderId() ==null || dto.getOrderId().isEmpty()){
-            throw new OrderException("传入的订单号为空");
+            throw new OrderException("取消订单-传入的订单号为空");
         }
         Order order = orderMapper.selectById(dto.getOrderId());
         if (order==null){
-            throw new OrderException("未查询到订单信息"+dto.getOrderId());
+            throw new OrderException("取消订单-未查询到订单信息"+dto.getOrderId());
         }
         /**更新订单*/
         Order orderDb = new Order();
@@ -273,14 +273,14 @@ public class OrderServiceImpl implements OrderService {
         }
         int update = orderMapper.update(orderDb);
         if (update!=1){
-            throw new OrderException("更新订单信息失败");
+            throw new OrderException("取消订单-更新订单信息失败");
         }
         /**更新座位状态*/
         List<String> seatIds =  orderDetailMapper.selectSeatIdByOrderId(order.getOrderId());
         for (String seatId : seatIds) {
             int i = seatClient.updateStatusBySeatId(seatId,(short) 0);
             if (i!=1){
-                throw new OrderException("更新座位"+seatId+"信息失败");
+                throw new OrderException("取消订单-更新座位"+seatId+"信息失败");
             }
         }
     }
@@ -288,11 +288,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void rejectOrder(RejectOrderDTO dto) {
         if (dto.getOrderId() ==null ||dto.getOrderId().equals("")){
-            throw new OrderException("传入的订单号为空");
+            throw new OrderException("拒绝订单-传入的订单号为空");
         }
         Order order = orderMapper.selectById(dto.getOrderId());
         if (order==null){
-            throw new OrderException("未查询到订单信息"+dto.getOrderId());
+            throw new OrderException("拒绝订单-未查询到订单信息"+dto.getOrderId());
         }
         /**更新订单*/
         Order orderDb = new Order();
@@ -306,14 +306,14 @@ public class OrderServiceImpl implements OrderService {
         }
         int update = orderMapper.update(orderDb);
         if (update!=1){
-            throw new OrderException("更新订单信息失败");
+            throw new OrderException("拒绝订单-更新订单信息失败");
         }
         /**更新座位状态*/
         List<String> seatIds =  orderDetailMapper.selectSeatIdByOrderId(order.getOrderId());
         for (String seatId : seatIds) {
             int i = seatClient.updateStatusBySeatId(seatId,(short) 0);
             if (i!=1){
-                throw new OrderException("更新座位"+seatId+"信息失败");
+                throw new OrderException("拒绝订单-更新座位"+seatId+"信息失败");
             }
         }
     }
@@ -321,7 +321,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDetailVO detail(String orderId) {
         if (orderId==null ||orderId.equals("")){
-            throw new OrderException("查询订单明细传入的订单id为空");
+            throw new OrderException("查询订单明细-传入的订单id为空");
         }
         Order order = orderMapper.selectById(orderId);
         List<OrderDetail> orderDetails = orderDetailMapper.selectByOrderId(orderId);
