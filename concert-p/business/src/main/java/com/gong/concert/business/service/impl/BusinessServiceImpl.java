@@ -134,7 +134,7 @@ public class BusinessServiceImpl implements BusinessService {
             //商家存在抛出异常
             throw new BusinessException(BusinessExceptionEnum.BUSINESS_NOT_EXIST);
         }
-        if (business.getPhone() != null) {
+        if (business.getPhone() != null && !business.getPhone().equals("")) {
             if (business.getPhone().length() != 11) {
                 //手机号格式错误
                 throw new BusinessException(BusinessExceptionEnum.PHONE_IS_ERROR);
