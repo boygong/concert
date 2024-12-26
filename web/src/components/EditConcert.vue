@@ -69,6 +69,7 @@ export default defineComponent({
         // 获取演唱会详情
         const fetchConcertDetails = async () => {
             try {
+                console.log("!"+props.concertId);
                 const response = await axios.get('/concert/concert/getById', {
                     params: { concertId: props.concertId },
                 });

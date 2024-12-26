@@ -134,6 +134,7 @@ export default defineComponent({
                     return "seat repair";
                 case 3:
                 case 5:
+                    return "seat sold"
                 case 6:
                     return "seat sold";
                 default:

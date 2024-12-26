@@ -8,7 +8,7 @@
                 </router-link>
             </a-menu-item>
             <a-menu-item :disabled="business.identity===1" key="/passenger">
-                <router-link :disabled="business.status===1" to="/passenger" >
+                <router-link :disabled="business.identity===1" to="/passenger" >
                     <user-outlined /> &nbsp; 商家管理
                 </router-link>
             </a-menu-item>

@@ -158,7 +158,7 @@
     </div>
 
     <a-drawer v-model:visible="isDrawerVisible" title="编辑演唱会" :width="800" :destroy-on-close="true">
-        <EditConcert :concertId:value="currentConcertId2" @closeDrawer="isDrawerVisible = false" />
+        <EditConcert :concertId="currentConcertId" @closeDrawer="isDrawerVisible = false" />
     </a-drawer>
 
     <!-- 审核弹窗 -->
